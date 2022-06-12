@@ -4,15 +4,16 @@ import com.sergey.zhuravlev.social.dto.ErrorDto;
 import com.sergey.zhuravlev.social.dto.FieldsErrorDto;
 import com.sergey.zhuravlev.social.enums.ErrorCode;
 import com.sergey.zhuravlev.social.exception.AlreadyExistsException;
+import com.sergey.zhuravlev.social.exception.FieldAlreadyExistsException;
+import com.sergey.zhuravlev.social.exception.ObjectNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
@@ -42,6 +43,12 @@ public class ErrorController {
         return new ErrorDto(ErrorCode.NOT_FOUND, ex.getMessage());
     }
 
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @ExceptionHandler({ ObjectNotFoundException.class })
+    public ErrorDto handleObjectNotFoundException(ObjectNotFoundException ex) {
+        return new ErrorDto(ErrorCode.NOT_FOUND, ex.getMessage());
+    }
+
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
     public final ErrorDto handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
@@ -55,9 +62,9 @@ public class ErrorController {
     }
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ AlreadyExistsException.class })
-    public final FieldsErrorDto handleFieldsException(AlreadyExistsException ex) {
-        return new FieldsErrorDto(ErrorCode.FIELD_ERROR, Arrays.asList(
+    @ExceptionHandler({ FieldAlreadyExistsException.class })
+    public final FieldsErrorDto handleFieldAlreadyExistsException(FieldAlreadyExistsException ex) {
+        return new FieldsErrorDto(ErrorCode.FIELD_ERROR, Collections.singletonList(
                 new FieldsErrorDto.FieldError(ex.getAttribute(), ex.getMessage())
         ));
     }
@@ -68,6 +75,12 @@ public class ErrorController {
         return new FieldsErrorDto(ErrorCode.NOT_VALID, ex.getBindingResult().getFieldErrors().stream()
                 .map(fe -> new FieldsErrorDto.FieldError(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList()));
+    }
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({ AlreadyExistsException.class })
+    public final ErrorDto handleAlreadyExistsException(AlreadyExistsException ex) {
+        return new ErrorDto(ErrorCode.ALREADY_EXIST, ex.getMessage());
     }
 
     // Note: remove method after development

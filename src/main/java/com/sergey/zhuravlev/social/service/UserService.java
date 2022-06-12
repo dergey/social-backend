@@ -1,7 +1,7 @@
 package com.sergey.zhuravlev.social.service;
 
 import com.sergey.zhuravlev.social.entity.User;
-import com.sergey.zhuravlev.social.exception.AlreadyExistsException;
+import com.sergey.zhuravlev.social.exception.FieldAlreadyExistsException;
 import com.sergey.zhuravlev.social.repository.UserRepository;
 import com.sergey.zhuravlev.social.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-
 import java.time.LocalDateTime;
 
 @Service
@@ -41,7 +40,7 @@ public class UserService {
     @Transactional
     public User createUser(String email, String rawPassword) {
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new AlreadyExistsException("Email already registered", "email", email);
+            throw new FieldAlreadyExistsException("Email already registered", "email", email);
         }
         User user = new User(null,
                 email,

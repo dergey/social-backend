@@ -36,6 +36,14 @@ public class Profile {
 
     @OneToMany
     @JoinTable(
+            name="friends",
+            joinColumns = @JoinColumn(name="profile_id"),
+            inverseJoinColumns = @JoinColumn(name="profile_friend_id")
+    )
+    private Collection<Profile> friends;
+
+    @OneToMany
+    @JoinTable(
             name="profile_images",
             joinColumns = @JoinColumn(name="profile_id"),
             inverseJoinColumns = @JoinColumn(name="image_id")

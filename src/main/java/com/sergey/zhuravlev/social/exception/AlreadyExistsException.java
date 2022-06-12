@@ -5,13 +5,13 @@ import lombok.Getter;
 @Getter
 public class AlreadyExistsException extends RuntimeException {
 
-    private final String attribute;
-    private final String attributeValue;
+    private final String id;
+    private final String objectType;
 
-    public AlreadyExistsException(String message, String attribute, String attributeValue) {
-        super(message);
-        this.attribute = attribute;
-        this.attributeValue = attributeValue;
+    public AlreadyExistsException(String id, String objectType) {
+        super(String.format("Object \"%s\" already exist with id %s", objectType, id));
+        this.id = id;
+        this.objectType = objectType;
     }
 
 }

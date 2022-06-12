@@ -1,10 +1,9 @@
 package com.sergey.zhuravlev.social.service;
 
 import com.sergey.zhuravlev.social.entity.Image;
-import com.sergey.zhuravlev.social.entity.Message;
 import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.User;
-import com.sergey.zhuravlev.social.exception.AlreadyExistsException;
+import com.sergey.zhuravlev.social.exception.FieldAlreadyExistsException;
 import com.sergey.zhuravlev.social.repository.ProfileRepository;
 import com.sergey.zhuravlev.social.util.SearchStringUtils;
 import lombok.RequiredArgsConstructor;
@@ -38,15 +37,16 @@ public class ProfileService {
     @Transactional
     public Profile createProfile(User user, String username, Image avatar, String firstName, String middleName, String secondName, LocalDate birthDate) {
         if (profileRepository.findByUser(user).isPresent()) {
-            throw new AlreadyExistsException("User already have profile", "user", user.getEmail());
+            throw new FieldAlreadyExistsException("User already have profile", "user", user.getEmail());
         }
         if (profileRepository.findByUsername(username).isPresent()) {
-            throw new AlreadyExistsException("Username already exists", "username", username);
+            throw new FieldAlreadyExistsException("Username already exists", "username", username);
         }
         Profile profile = new Profile(null,
                 user,
                 username,
                 avatar,
+                Collections.emptyList(),
                 Collections.emptyList(),
                 firstName,
                 middleName,
