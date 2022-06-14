@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/profile")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class FriendController {
 
@@ -27,23 +27,30 @@ public class FriendController {
     private final ProfileMapper profileMapper;
 
     @GetMapping("/friend")
-    public Page<ProfileDto> getAllFriends(Pageable pageable) {
+    public Page<ProfileDto> getCurrentUserFriends(Pageable pageable) {
         User currentUser = userService.getCurrentUser();
         Profile currentProfile = profileService.getProfile(currentUser);
-        return friendService.getAllFriends(currentProfile, pageable)
+        return friendService.getProfileFriends(currentProfile, pageable)
                 .map(profileMapper::profileToProfileDto);
     }
 
     @GetMapping("/friend/requests")
-    public Page<ProfileDto> getAllFriendRequests(Pageable pageable) {
+    public Page<ProfileDto> getCurrentUserIncomingFriendRequests(Pageable pageable) {
         User currentUser = userService.getCurrentUser();
         Profile currentProfile = profileService.getProfile(currentUser);
-        return friendService.getAllFriendRequests(currentProfile, pageable)
+        return friendService.getProfileIncomingFriendRequests(currentProfile, pageable)
+                .map(profileMapper::profileToProfileDto);
+    }
+
+    @GetMapping("/profile/{username}/friend")
+    public Page<ProfileDto> getProfileFriends(@PathVariable String username, Pageable pageable) {
+        Profile profile = profileService.getProfile(username);
+        return friendService.getProfileFriends(profile, pageable)
                 .map(profileMapper::profileToProfileDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping("/{username}/friend_request")
+    @PostMapping("/profile/{username}/friend_request")
     public void createFriendRequest(@PathVariable String username) {
         User currentUser = userService.getCurrentUser();
         Profile currentProfile = profileService.getProfile(currentUser);

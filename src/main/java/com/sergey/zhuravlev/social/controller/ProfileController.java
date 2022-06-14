@@ -1,7 +1,9 @@
 package com.sergey.zhuravlev.social.controller;
 
 import com.sergey.zhuravlev.social.dto.ProfileDetailDto;
-import com.sergey.zhuravlev.social.entity.*;
+import com.sergey.zhuravlev.social.entity.Image;
+import com.sergey.zhuravlev.social.entity.Profile;
+import com.sergey.zhuravlev.social.entity.User;
 import com.sergey.zhuravlev.social.enums.ImageSize;
 import com.sergey.zhuravlev.social.mapper.ProfileMapper;
 import com.sergey.zhuravlev.social.service.ImageService;
@@ -32,7 +34,7 @@ public class ProfileController {
     private final ProfileMapper profileMapper;
 
     @GetMapping
-    public ProfileDetailDto getCurrentProfile() {
+    public ProfileDetailDto getCurrentUserProfile() {
         User user = userService.getCurrentUser();
         Profile profile = profileService.getProfile(user);
         return profileMapper.profileToProfileDetailDto(profile);

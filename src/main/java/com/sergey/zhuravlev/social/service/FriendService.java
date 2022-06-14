@@ -28,12 +28,12 @@ public class FriendService {
     private Duration friendRequestTimeoutPeriod;
 
     @Transactional(readOnly = true)
-    public Page<Profile> getAllFriends(Profile currentProfile, Pageable pageable) {
+    public Page<Profile> getProfileFriends(Profile currentProfile, Pageable pageable) {
         return profileRepository.findAllByFriendInProfile(currentProfile, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<Profile> getAllFriendRequests(Profile currentProfile, Pageable pageable) {
+    public Page<Profile> getProfileIncomingFriendRequests(Profile currentProfile, Pageable pageable) {
         return profileRepository.findAllByProfileTargetInFriendRequest(currentProfile, pageable);
     }
 
