@@ -10,6 +10,7 @@ import org.hibernate.annotations.Type;
 import org.springframework.util.unit.DataSize;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -53,5 +54,8 @@ public class Image {
     @Type(type="org.hibernate.type.MaterializedBlobType")
     @Column(name = "data", nullable = false, updatable = false)
     private byte[] data;
+
+    @Column(name = "create_at", nullable = false, updatable = false)
+    private LocalDateTime createAt;
 
 }

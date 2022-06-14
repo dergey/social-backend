@@ -9,6 +9,7 @@ import com.sergey.zhuravlev.social.mapper.ProfileMapper;
 import com.sergey.zhuravlev.social.service.ImageService;
 import com.sergey.zhuravlev.social.service.ProfileService;
 import com.sergey.zhuravlev.social.service.UserService;
+import com.sergey.zhuravlev.social.util.ImageResponseUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.ZoneId;
 
 @Slf4j
 @RestController
@@ -61,15 +61,15 @@ public class ProfileController {
         Profile profile = profileService.getProfile(username);
 
         // Check for data changes
-        ZoneId zoneId = ZoneId.of("GMT");
-        long lastModifiedTimestamp = profile.getUpdateAt().atZone(zoneId).toInstant().toEpochMilli();
-        if (request.checkNotModified(lastModifiedTimestamp)) {
+        long lastModifiedTimestamp = ImageResponseUtils.toLastModifiedTimestamp(profile.getAvatar().getCreateAt());
+        if (ImageResponseUtils.checkNotModified(request, lastModifiedTimestamp)) {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
         Image image = imageService.fetchImage(profile.getAvatar());
         return ResponseEntity
                 .status(HttpStatus.OK)
+                .lastModified(lastModifiedTimestamp)
                 .contentType(MediaType.valueOf(image.getMimeType()))
                 .body(image.getData());
     }
@@ -81,15 +81,15 @@ public class ProfileController {
         Profile profile = profileService.getProfile(username);
 
         // Check for data changes
-        ZoneId zoneId = ZoneId.of("GMT");
-        long lastModifiedTimestamp = profile.getUpdateAt().atZone(zoneId).toInstant().toEpochMilli();
-        if (request.checkNotModified(lastModifiedTimestamp)) {
+        long lastModifiedTimestamp = ImageResponseUtils.toLastModifiedTimestamp(profile.getAvatar().getCreateAt());
+        if (ImageResponseUtils.checkNotModified(request, lastModifiedTimestamp)) {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
         Image image = imageService.fetchPreviewImage(profile.getAvatar());
         return ResponseEntity
                 .status(HttpStatus.OK)
+                .lastModified(lastModifiedTimestamp)
                 .contentType(MediaType.valueOf(image.getMimeType()))
                 .body(image.getPreview());
     }

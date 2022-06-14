@@ -20,6 +20,7 @@ import javax.imageio.ImageReader;
 import javax.persistence.EntityNotFoundException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +67,8 @@ public class ImageService {
                 bufferedImage.getHeight(),
                 bufferedImage.getWidth(),
                 DataSize.ofBytes(imageData.length),
-                imageData
+                imageData,
+                LocalDateTime.now()
         ));
     }
 
@@ -86,7 +88,8 @@ public class ImageService {
                 bufferedImage.getHeight(),
                 bufferedImage.getWidth(),
                 DataSize.ofBytes(imageData.length),
-                imageData
+                imageData,
+                LocalDateTime.now()
         ));
     }
 
