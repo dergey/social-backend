@@ -1,0 +1,32 @@
+name: Deployment
+
+on:
+  push:
+    branches:
+      - releases/*
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: 
+      name: Internal Server
+      url: https://google.com
+    steps:
+      - name: Upload artifact with sftp
+        uses: wangyucode/sftp-upload-action@v1.3.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: github
+          password: ${{ secrets.password }} 
+          localDir: 'dist'
+          remoteDir: '/path/to/dest'
+          dryRun: true # use dryRun for test
+      - name: Run artifact via ssh
+        uses: nerd4ever/ssh-action@master
+        with:
+          command: |
+            cd /tmp
+            ls -a
+          host: ${{ secrets.HOST }}
+          user: github
+          key: ${{ secrets.PRIVATE_KEY}}
