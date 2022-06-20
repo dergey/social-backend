@@ -16,7 +16,7 @@ public class ChatPreviewDto {
 
     private Long id;
 
-    private ProfileDto targetProfile;
+    private ProfilePreviewDto targetProfile;
 
     private LocalDateTime createAt;
 

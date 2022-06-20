@@ -1,6 +1,6 @@
 package com.sergey.zhuravlev.social.controller;
 
-import com.sergey.zhuravlev.social.dto.ProfileDto;
+import com.sergey.zhuravlev.social.dto.ProfilePreviewDto;
 import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.User;
 import com.sergey.zhuravlev.social.mapper.ProfileMapper;
@@ -27,30 +27,30 @@ public class FriendController {
     private final ProfileMapper profileMapper;
 
     @GetMapping("/friend")
-    public Page<ProfileDto> getCurrentUserFriends(Pageable pageable) {
+    public Page<ProfilePreviewDto> getCurrentUserFriends(Pageable pageable) {
         User currentUser = userService.getCurrentUser();
         Profile currentProfile = profileService.getProfile(currentUser);
         return friendService.getProfileFriends(currentProfile, pageable)
-                .map(profileMapper::profileToProfileDto);
+                .map(profileMapper::profileToProfilePreviewDto);
     }
 
     @GetMapping("/friend/requests")
-    public Page<ProfileDto> getCurrentUserIncomingFriendRequests(Pageable pageable) {
+    public Page<ProfilePreviewDto> getCurrentUserIncomingFriendRequests(Pageable pageable) {
         User currentUser = userService.getCurrentUser();
         Profile currentProfile = profileService.getProfile(currentUser);
         return friendService.getProfileIncomingFriendRequests(currentProfile, pageable)
-                .map(profileMapper::profileToProfileDto);
+                .map(profileMapper::profileToProfilePreviewDto);
     }
 
     @GetMapping("/profile/{username}/friend")
-    public Page<ProfileDto> getProfileFriends(@PathVariable String username, Pageable pageable) {
+    public Page<ProfilePreviewDto> getProfileFriends(@PathVariable String username, Pageable pageable) {
         Profile profile = profileService.getProfile(username);
         return friendService.getProfileFriends(profile, pageable)
-                .map(profileMapper::profileToProfileDto);
+                .map(profileMapper::profileToProfilePreviewDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping("/profile/{username}/friend_request")
+    @PostMapping("/profile/{username}/friend/request")
     public void createFriendRequest(@PathVariable String username) {
         User currentUser = userService.getCurrentUser();
         Profile currentProfile = profileService.getProfile(currentUser);

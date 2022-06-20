@@ -1,6 +1,6 @@
 package com.sergey.zhuravlev.social.controller;
 
-import com.sergey.zhuravlev.social.dto.ProfileDetailDto;
+import com.sergey.zhuravlev.social.dto.ProfileDto;
 import com.sergey.zhuravlev.social.entity.Image;
 import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.User;
@@ -34,26 +34,26 @@ public class ProfileController {
     private final ProfileMapper profileMapper;
 
     @GetMapping
-    public ProfileDetailDto getCurrentUserProfile() {
+    public ProfileDto getCurrentUserProfile() {
         User user = userService.getCurrentUser();
         Profile profile = profileService.getProfile(user);
-        return profileMapper.profileToProfileDetailDto(profile);
+        return profileMapper.profileToProfileDto(profile);
     }
 
     @PostMapping("/avatar")
-    public ProfileDetailDto createOrUpdateProfileAvatar(@RequestParam("image") MultipartFile multipartFile)
+    public ProfileDto createOrUpdateProfileAvatar(@RequestParam("image") MultipartFile multipartFile)
             throws IOException {
         User currentUser = userService.getCurrentUser();
         Profile profile = profileService.getProfile(currentUser);
         Image image = imageService.createImage(currentUser, multipartFile);
         profile = profileService.createOrUpdateProfileAvatar(profile, image);
-        return profileMapper.profileToProfileDetailDto(profile);
+        return profileMapper.profileToProfileDto(profile);
     }
 
     @GetMapping("/{username}")
-    public ProfileDetailDto getProfile(@PathVariable String username) {
+    public ProfileDto getProfile(@PathVariable String username) {
         Profile profile = profileService.getProfile(username);
-        return profileMapper.profileToProfileDetailDto(profile);
+        return profileMapper.profileToProfileDto(profile);
     }
 
     @GetMapping("/{username}/avatar")
