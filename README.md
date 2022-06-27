@@ -1,5 +1,5 @@
-![Status](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fxpolr.space%2Fapi%2Fservice%2Fsocial%2Fshieldsio%2F)
-![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white) 
+[![Status](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fxpolr.space%2Fapi%2Fservice%2Fsocial%2Fshieldsio%2F)](https://social.xpolr.space/api)
+[![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)](https://social.xpolr.space/swagger-ui.html)
 
 # Social Backend
 The backend part of the social network developed using Spring & SpringBoot.
