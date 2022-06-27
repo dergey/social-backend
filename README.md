@@ -1,4 +1,4 @@
-![Status](https://img.shields.io/badge/Social%20API-offline-red?style=for-the-badge)
+![Status](https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fxpolr.space%2Fapi%2Fservice%2Fsocial%2Fshieldsio%2F)
 ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white) 
 
 # Social Backend
