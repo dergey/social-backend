@@ -1,9 +1,11 @@
 package com.sergey.zhuravlev.social.service;
 
 import com.google.common.collect.Iterables;
-import com.sergey.zhuravlev.social.entity.*;
-import com.sergey.zhuravlev.social.enums.MessageType;
+import com.sergey.zhuravlev.social.entity.Chat;
+import com.sergey.zhuravlev.social.entity.Image;
+import com.sergey.zhuravlev.social.entity.Message;
 import com.sergey.zhuravlev.social.enums.MessageSenderType;
+import com.sergey.zhuravlev.social.enums.MessageType;
 import com.sergey.zhuravlev.social.repository.ChatRepository;
 import com.sergey.zhuravlev.social.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +64,7 @@ public class MessageService {
                 text,
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                true));
+                false)); // read by other user!
         chat.setLastMessage(message);
         return message;
     }
@@ -89,7 +91,7 @@ public class MessageService {
                 null,
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                true));
+                false));
         chat.setLastMessage(message);
         return message;
     }

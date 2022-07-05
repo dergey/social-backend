@@ -3,6 +3,7 @@ package com.sergey.zhuravlev.social.service;
 import com.sergey.zhuravlev.social.entity.Chat;
 import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.User;
+import com.sergey.zhuravlev.social.enums.MessageSenderType;
 import com.sergey.zhuravlev.social.repository.ChatRepository;
 import com.sergey.zhuravlev.social.repository.MessageRepository;
 import com.sergey.zhuravlev.social.repository.ProfileRepository;
@@ -59,6 +60,7 @@ public class ChatService {
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 true,
+                null,
                 null));
 
         Chat inverseChat = chatRepository.save(new Chat(null,
@@ -68,6 +70,7 @@ public class ChatService {
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 true,
+                null,
                 null));
 
         chat.setLinkedChat(inverseChat);
@@ -78,7 +81,8 @@ public class ChatService {
     @Transactional
     public Chat updateReadStatus(Chat chat) {
         chat = chatRepository.getById(chat.getId());
-        messageRepository.updateMessageReadByChat(chat);
+        messageRepository.updateMessageReadByChat(chat, MessageSenderType.TARGET);
+        messageRepository.updateMessageReadByChat(chat.getLinkedChat(), MessageSenderType.SOURCE);
         return chat;
     }
 

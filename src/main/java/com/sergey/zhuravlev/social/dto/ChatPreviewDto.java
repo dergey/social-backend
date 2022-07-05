@@ -24,6 +24,8 @@ public class ChatPreviewDto {
 
     private boolean messageAllow;
 
+    private Long unreadMessages;
+
     private MessageDto lastMessage;
 
 }
