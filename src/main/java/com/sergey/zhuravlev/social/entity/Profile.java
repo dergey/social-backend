@@ -1,5 +1,6 @@
 package com.sergey.zhuravlev.social.entity;
 
+import com.sergey.zhuravlev.social.enums.RelationshipStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,7 @@ public class Profile {
     @JoinColumn(name = "avatar")
     private Image avatar;
 
-    @OneToMany
+    @ManyToMany
     @JoinTable(
             name="friends",
             joinColumns = @JoinColumn(name="profile_id"),
@@ -58,6 +59,21 @@ public class Profile {
 
     @Column(name = "second_name", nullable = false)
     private String secondName;
+
+    @Column(name = "overview", length = 500)
+    private String overview;
+
+    @Column(name = "relationship_status", length = 20)
+    private RelationshipStatus relationshipStatus;
+
+    @Column(name = "city", length = 100)
+    private String city;
+
+    @Column(name = "workplace", length = 100)
+    private String workplace;
+
+    @Column(name = "education", length = 100)
+    private String education;
 
     @Column(name = "birth_date")
     private LocalDate birthDate;

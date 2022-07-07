@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -32,6 +31,7 @@ public class RegistrationController {
                 registrationDto.getFirstName(),
                 registrationDto.getMiddleName(),
                 registrationDto.getSecondName(),
+                registrationDto.getCity(),
                 registrationDto.getBirthDate());
         return userMapper.userToUserDto(user);
     }

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDate;
 
 @Service
@@ -19,10 +18,10 @@ public class RegistrationService {
     private final ProfileService profileService;
 
     @Transactional
-    public User registerUser(String email, String rawPassword, String username, String firstName, String middleName, String secondName, LocalDate birthDate) {
+    public User registerUser(String email, String rawPassword, String username, String firstName, String middleName, String secondName, String city, LocalDate birthDate) {
         User user = userService.createUser(email, rawPassword);
         Image avatarImage = imageService.generateAvatarImage(user, firstName, secondName);
-        Profile profile = profileService.createProfile(user, username, avatarImage, firstName, middleName, secondName, birthDate);
+        Profile profile = profileService.createProfile(user, username, avatarImage, firstName, middleName, secondName, city, birthDate);
         user.setProfile(profile);
         return user;
     }

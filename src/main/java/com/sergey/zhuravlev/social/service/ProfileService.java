@@ -35,7 +35,7 @@ public class ProfileService {
 
 
     @Transactional
-    public Profile createProfile(User user, String username, Image avatar, String firstName, String middleName, String secondName, LocalDate birthDate) {
+    public Profile createProfile(User user, String username, Image avatar, String firstName, String middleName, String secondName, String city, LocalDate birthDate) {
         if (profileRepository.findByUser(user).isPresent()) {
             throw new FieldAlreadyExistsException("User already have profile", "user", user.getEmail());
         }
@@ -51,6 +51,11 @@ public class ProfileService {
                 firstName,
                 middleName,
                 secondName,
+                null,
+                null,
+                city,
+                null,
+                null,
                 birthDate,
                 LocalDateTime.now(),
                 LocalDateTime.now(),
