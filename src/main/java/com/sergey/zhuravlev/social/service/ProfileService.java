@@ -7,6 +7,8 @@ import com.sergey.zhuravlev.social.exception.FieldAlreadyExistsException;
 import com.sergey.zhuravlev.social.repository.ProfileRepository;
 import com.sergey.zhuravlev.social.util.SearchStringUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,11 @@ import java.util.Collections;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
+
+    @Transactional(readOnly = true)
+    public Page<Profile> searchProfile(String searchQuery, Pageable pageable) {
+        return profileRepository.findAllBySearchStringContainingIgnoreCase(searchQuery, pageable);
+    }
 
     @Transactional(readOnly = true)
     public Profile getProfile(String username) {

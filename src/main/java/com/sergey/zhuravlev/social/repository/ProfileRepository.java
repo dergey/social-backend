@@ -30,4 +30,8 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     @Query(value = "select p.friends from Profile p where p = :profile",
             countQuery = "select count(p.friends) from Profile p where p = :profile")
     Page<Profile> findAllByFriendInProfile(@Param("profile") Profile profile, Pageable pageable);
+
+
+
+    Page<Profile> findAllBySearchStringContainingIgnoreCase(String searchQuery, Pageable pageable);
 }
