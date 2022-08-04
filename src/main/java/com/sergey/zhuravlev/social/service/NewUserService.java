@@ -3,14 +3,13 @@ package com.sergey.zhuravlev.social.service;
 import com.sergey.zhuravlev.social.entity.NewUser;
 import com.sergey.zhuravlev.social.enums.ErrorCode;
 import com.sergey.zhuravlev.social.enums.RegistrationStatus;
-import com.sergey.zhuravlev.social.exception.*;
+import com.sergey.zhuravlev.social.exception.SocialServiceFieldException;
 import com.sergey.zhuravlev.social.repository.NewUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,23 +30,39 @@ public class NewUserService {
     }
 
     public NewUser createNewUserWithPhone(String phone) {
-        return newUserRepository.save(new NewUser(null,
-                UUID.randomUUID(),
-                null,
-                phone,
-                RegistrationStatus.PHONE_CONFIRMATION,
-                confirmationService.createPhoneConfirmation(),
-                LocalDateTime.now()));
+        NewUser newUser;
+        Optional<NewUser> newUserOptional = newUserRepository.findByPhone(phone);
+        if (newUserOptional.isPresent()) {
+            newUser = newUserOptional.get();
+            renewConfirmation(newUser);
+        } else {
+            newUser = newUserRepository.save(new NewUser(null,
+                    UUID.randomUUID(),
+                    null,
+                    phone,
+                    RegistrationStatus.PHONE_CONFIRMATION,
+                    confirmationService.createPhoneConfirmation(),
+                    LocalDateTime.now()));
+        }
+        return newUser;
     }
 
     public NewUser createNewUserWithEmail(String email) {
-        return newUserRepository.save(new NewUser(null,
-                UUID.randomUUID(),
-                email,
-                null,
-                RegistrationStatus.EMAIL_CONFIRMATION,
-                confirmationService.createEmailConfirmation(),
-                LocalDateTime.now()));
+        NewUser newUser;
+        Optional<NewUser> newUserOptional = newUserRepository.findByEmail(email);
+        if (newUserOptional.isPresent()) {
+            newUser = newUserOptional.get();
+            renewConfirmation(newUser);
+        } else {
+            newUser = newUserRepository.save(new NewUser(null,
+                    UUID.randomUUID(),
+                    email,
+                    null,
+                    RegistrationStatus.EMAIL_CONFIRMATION,
+                    confirmationService.createEmailConfirmation(),
+                    LocalDateTime.now()));
+        }
+        return newUser;
     }
 
     public void renewConfirmation(NewUser newUser) {

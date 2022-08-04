@@ -11,7 +11,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Embeddable
 @Getter
