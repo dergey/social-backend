@@ -38,7 +38,7 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(String email, String rawPassword) {
+    public User createUserWithEmail(String email, String rawPassword) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new FieldAlreadyExistsException("Email already registered", "email", email);
         }

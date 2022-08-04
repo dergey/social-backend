@@ -1,5 +1,6 @@
 package com.sergey.zhuravlev.social.dto;
 
+import com.sergey.zhuravlev.social.enums.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class CreateChatDto {
 
-    @NotBlank
+    @NotBlank(message = ErrorCode.NOT_BLANK_CODE)
     private String targetUsername;
 
 }

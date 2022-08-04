@@ -1,12 +1,13 @@
 package com.sergey.zhuravlev.social.controller;
 
+import com.sergey.zhuravlev.social.config.ErrorMessageSource;
 import com.sergey.zhuravlev.social.dto.ErrorDto;
 import com.sergey.zhuravlev.social.dto.FieldsErrorDto;
 import com.sergey.zhuravlev.social.enums.ErrorCode;
-import com.sergey.zhuravlev.social.exception.AlreadyExistsException;
-import com.sergey.zhuravlev.social.exception.FieldAlreadyExistsException;
-import com.sergey.zhuravlev.social.exception.ObjectNotFoundException;
+import com.sergey.zhuravlev.social.exception.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,17 +19,28 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ErrorController {
+
+    private final ErrorMessageSource errors;
 
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({ Exception.class })
     public ErrorDto handleException(Exception ex) {
         log.warn("Status 500: ", ex);
         return new ErrorDto(ErrorCode.UNKNOWN_ERROR, ex.getMessage());
+    }
+
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler({ SocialServiceException.class })
+    public ErrorDto handleSocialServiceException(SocialServiceException ex) {
+        log.debug("Status 500: ", ex);
+        return new ErrorDto(ex.getCode(), errors.getMessage(ex, Locale.getDefault()));
     }
 
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
@@ -81,6 +93,14 @@ public class ErrorController {
     @ExceptionHandler({ AlreadyExistsException.class })
     public final ErrorDto handleAlreadyExistsException(AlreadyExistsException ex) {
         return new ErrorDto(ErrorCode.ALREADY_EXIST, ex.getMessage());
+    }
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({ SocialServiceFieldException.class })
+    public final FieldsErrorDto handleSocialServiceFieldException(SocialServiceFieldException ex) {
+        return new FieldsErrorDto(ErrorCode.NOT_VALID,
+                Collections.singletonList(new FieldsErrorDto.FieldError(ex.getField(), ex.getCode().toString()))
+        );
     }
 
     // Note: remove method after development

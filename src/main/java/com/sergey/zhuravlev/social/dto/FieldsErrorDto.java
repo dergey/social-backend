@@ -19,7 +19,7 @@ public class FieldsErrorDto {
     @AllArgsConstructor
     public static class FieldError {
         private final String field;
-        private final String message;
+        private final String code;
     }
 
     private ErrorCode code;

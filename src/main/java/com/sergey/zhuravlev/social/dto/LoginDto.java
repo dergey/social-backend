@@ -1,5 +1,6 @@
 package com.sergey.zhuravlev.social.dto;
 
+import com.sergey.zhuravlev.social.enums.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,13 +16,13 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class LoginDto {
 
-    @Email
-    @NotNull
-    @Size(min = 1, max = 191)
+    @Email(message = ErrorCode.INVALID_EMAIL_FORMAT_CODE)
+    @NotNull(message = ErrorCode.NOT_NULL_CODE)
+    @Size(min = 1, max = 191, message = ErrorCode.WRONG_LENGTH_CODE)
     private String email;
 
-    @NotNull
-    @Size(min = 4, max = 100)
+    @NotNull(message = ErrorCode.NOT_NULL_CODE)
+    @Size(min = 4, max = 100, message = ErrorCode.WRONG_LENGTH_CODE)
     private String password;
 
     private boolean rememberMe;
