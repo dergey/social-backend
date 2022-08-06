@@ -10,11 +10,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 @Service
 public class ConfirmationService {
 
-    @Value("${confirmation.code.manual.length:4}")
+    @Value("${confirmation.code.manual.length:5}")
     private Integer manualCodeLength;
 
     @Value("${confirmation.code.link.length:16}")
@@ -23,10 +26,13 @@ public class ConfirmationService {
     @Value("${confirmation.code.manual.max-tries:3}")
     private Integer manualCodeMaxTries;
 
+    @Value("${confirmation.test:false}")
+    private boolean isTest;
+
     public Confirmation createPhoneConfirmation() {
         return new Confirmation(
                 ConfirmationType.PHONE,
-                RandomStringUtils.getNumericString(manualCodeLength),
+                generateManualCode(),
                 0,
                 null,
                 LocalDateTime.now().plusMinutes(15));
@@ -35,17 +41,17 @@ public class ConfirmationService {
     public Confirmation createEmailConfirmation() {
         return new Confirmation(
                 ConfirmationType.EMAIL,
-                RandomStringUtils.getNumericString(manualCodeLength),
+                generateManualCode(),
                 0,
-                RandomStringUtils.getAlphaNumericString(linkCodeLength),
+                generateLinkCode(),
                 LocalDateTime.now().plusHours(6));
     }
 
     public void resetConfirmation(Confirmation confirmation) {
-        confirmation.setManualCode(RandomStringUtils.getNumericString(manualCodeLength));
+        confirmation.setManualCode(generateManualCode());
         confirmation.setManualCodeTries(0);
         if (confirmation.getType().equals(ConfirmationType.EMAIL)) {
-            confirmation.setLinkCode(RandomStringUtils.getAlphaNumericString(linkCodeLength));
+            confirmation.setLinkCode(generateLinkCode());
             confirmation.setValidUntil(LocalDateTime.now().plusHours(6));
         } else {
             confirmation.setValidUntil(LocalDateTime.now().plusMinutes(15));
@@ -70,6 +76,18 @@ public class ConfirmationService {
             throw new SocialServiceException(ErrorCode.CONFIRMATION_HAS_EXPIRED);
         }
         // The code will always be correct, because the search goes by the code.
+    }
+
+    private String generateManualCode() {
+        if (isTest) {
+            return Stream.generate(() -> "1").limit(manualCodeLength).collect(joining());
+        } else {
+            return RandomStringUtils.getNumericString(manualCodeLength);
+        }
+    }
+
+    private String generateLinkCode() {
+        return RandomStringUtils.getAlphaNumericString(linkCodeLength);
     }
 
 }
