@@ -9,6 +9,7 @@ import com.sergey.zhuravlev.social.service.ImageService;
 import com.sergey.zhuravlev.social.service.ProfileService;
 import com.sergey.zhuravlev.social.service.StickerService;
 import com.sergey.zhuravlev.social.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Tag(name = "Sticker endpoints")
 @RestController
 @RequestMapping("/api/sticker")
 @RequiredArgsConstructor

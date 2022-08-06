@@ -10,11 +10,14 @@ import com.sergey.zhuravlev.social.service.ChatService;
 import com.sergey.zhuravlev.social.service.ImageService;
 import com.sergey.zhuravlev.social.service.MessageService;
 import com.sergey.zhuravlev.social.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.time.ZoneId;
 
+@Tag(name = "Message endpoints")
 @RestController
 @RequestMapping("/api/chat/{chatId}/message")
 @RequiredArgsConstructor
@@ -34,7 +38,7 @@ public class MessageController {
     private final MessageService messageService;
 
     @GetMapping
-    public Page<MessageDto> getChatMessages(@PathVariable Long chatId, Pageable pageable) {
+    public Page<MessageDto> getChatMessages(@PathVariable Long chatId, @ParameterObject Pageable pageable) {
         Chat chat = chatService.getChat(userService.getCurrentUser(), chatId);
         return messageService.getChatMessages(chat, pageable).map(MessageMapper::messageToMessageDto);
     }

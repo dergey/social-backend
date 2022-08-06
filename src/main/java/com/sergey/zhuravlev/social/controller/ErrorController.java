@@ -5,9 +5,9 @@ import com.sergey.zhuravlev.social.dto.ErrorDto;
 import com.sergey.zhuravlev.social.dto.FieldsErrorDto;
 import com.sergey.zhuravlev.social.enums.ErrorCode;
 import com.sergey.zhuravlev.social.exception.*;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -43,18 +43,21 @@ public class ErrorController {
         return new ErrorDto(ex.getCode(), errors.getMessage(ex, Locale.getDefault()));
     }
 
+    @Hidden
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({ AuthenticationException.class })
     public ErrorDto handleAuthenticationException(AuthenticationException ex) {
         return new ErrorDto(ErrorCode.UNAUTHORIZED, ex.getMessage());
     }
 
+    @Hidden
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @ExceptionHandler({ EntityNotFoundException.class })
     public ErrorDto handleEntityNotFoundException(EntityNotFoundException ex) {
         return new ErrorDto(ErrorCode.NOT_FOUND, ex.getMessage());
     }
 
+    @Hidden
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @ExceptionHandler({ ObjectNotFoundException.class })
     public ErrorDto handleObjectNotFoundException(ObjectNotFoundException ex) {

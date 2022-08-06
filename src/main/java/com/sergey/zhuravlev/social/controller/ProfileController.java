@@ -10,6 +10,7 @@ import com.sergey.zhuravlev.social.service.ImageService;
 import com.sergey.zhuravlev.social.service.ProfileService;
 import com.sergey.zhuravlev.social.service.UserService;
 import com.sergey.zhuravlev.social.util.ImageResponseUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Tag(name = "Profile endpoints")
 @Slf4j
 @RestController
 @RequestMapping("/api/profile")
