@@ -85,6 +85,9 @@ public class RegistrationService {
                                      String firstName, String middleName, String secondName,
                                      String city, LocalDate birthDate) {
         NewUser newUser = newUserService.getNewUserByContinuationCode(continuationCode);
+        if (!newUser.getRegistrationStatus().equals(RegistrationStatus.PERSONAL_DATA_AWAIT)) {
+            throw new SocialServiceException(ErrorCode.INVALID_NEW_USER_STATE);
+        }
         User user = userService.createUserWithEmail(newUser.getEmail(), rawPassword);
         Image avatarImage = imageService.generateAvatarImage(user, firstName, secondName);
         Profile profile = profileService.createProfile(user, username, avatarImage, firstName, middleName, secondName, city, birthDate);

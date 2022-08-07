@@ -1,6 +1,7 @@
 package com.sergey.zhuravlev.social.service;
 
 import com.sergey.zhuravlev.social.entity.NewUser;
+import com.sergey.zhuravlev.social.enums.ConfirmationType;
 import com.sergey.zhuravlev.social.enums.ErrorCode;
 import com.sergey.zhuravlev.social.enums.RegistrationStatus;
 import com.sergey.zhuravlev.social.exception.SocialServiceFieldException;
@@ -68,6 +69,11 @@ public class NewUserService {
     public void renewConfirmation(NewUser newUser) {
         confirmationService.resetConfirmation(newUser.getConfirmation());
         newUser.setContinuationCode(UUID.randomUUID());
+        if (newUser.getConfirmation().getType().equals(ConfirmationType.EMAIL)) {
+            newUser.setRegistrationStatus(RegistrationStatus.EMAIL_CONFIRMATION);
+        } else {
+            newUser.setRegistrationStatus(RegistrationStatus.PHONE_CONFIRMATION);
+        }
     }
 
     public void confirmByManualCode(NewUser newUser, String manualCode) {
