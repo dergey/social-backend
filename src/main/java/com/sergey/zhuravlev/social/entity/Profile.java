@@ -1,5 +1,7 @@
 package com.sergey.zhuravlev.social.entity;
 
+import com.sergey.zhuravlev.social.entity.education.Education;
+import com.sergey.zhuravlev.social.enums.Gender;
 import com.sergey.zhuravlev.social.enums.RelationshipStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +18,9 @@ import java.util.Collection;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "profiles")
+@Table(name = "profiles", indexes = {
+        @Index(name = "IX_PROFILE_USERNAME", columnList = "username")
+})
 public class Profile {
 
     @Id
@@ -60,14 +64,17 @@ public class Profile {
     @Column(name = "second_name", nullable = false)
     private String secondName;
 
+    @Column(name = "gender")
+    private Gender gender;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
     @Column(name = "overview", length = 500)
     private String overview;
 
     @Column(name = "relationship_status", length = 20)
     private RelationshipStatus relationshipStatus;
-
-    @Column(name = "city", length = 100)
-    private String city;
 
     @Column(name = "workplace", length = 100)
     private String workplace;
@@ -75,8 +82,15 @@ public class Profile {
     @Column(name = "education", length = 100)
     private String education;
 
-    @Column(name = "birth_date")
-    private LocalDate birthDate;
+    @Column(name = "citizenship", length = 2)
+    private String citizenship;
+
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    @OneToMany(mappedBy = "profile")
+    private Collection<Education> educations;
 
     @Column(name = "create_at", nullable = false, updatable = false)
     private LocalDateTime createAt;
