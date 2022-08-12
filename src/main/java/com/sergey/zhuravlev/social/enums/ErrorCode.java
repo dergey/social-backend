@@ -15,7 +15,10 @@ public enum ErrorCode {
     // registration:
     CONFIRMATION_HAS_EXPIRED,
     INVALID_NEW_USER_STATE,
-    TOO_MANY_CONFIRMATION_TRIES;
+    TOO_MANY_CONFIRMATION_TRIES,
+
+    // fields error:
+    INVALID_EMAIL_OR_PHONE_FORMAT;
 
     public static final String NOT_BLANK_CODE = "NOT_BLANK";
     public static final String NOT_NULL_CODE = "NOT_NULL";

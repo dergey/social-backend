@@ -8,6 +8,7 @@ import com.sergey.zhuravlev.social.enums.ErrorCode;
 import com.sergey.zhuravlev.social.enums.RegistrationStatus;
 import com.sergey.zhuravlev.social.exception.SocialServiceException;
 import com.sergey.zhuravlev.social.exception.SocialServiceFieldException;
+import com.sergey.zhuravlev.social.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
@@ -30,16 +31,21 @@ public class RegistrationService {
     private final ImageService imageService;
     private final ProfileService profileService;
 
+    private final UserRepository userRepository;
+
     @Transactional
-    public NewUser startRegistration(String emailOrPhone) {
-        Matcher matcher = EMAIL_OR_PHONE_PATTERN.matcher(emailOrPhone);
+    public NewUser startRegistration(String phoneOrEmail) {
+        Matcher matcher = EMAIL_OR_PHONE_PATTERN.matcher(phoneOrEmail);
         if (!matcher.matches()) {
-            throw new SocialServiceFieldException("emailOrPhone", ErrorCode.NOT_VALID);
+            throw new SocialServiceFieldException("phoneOrEmail", ErrorCode.INVALID_EMAIL_OR_PHONE_FORMAT);
         }
         String phone = matcher.group(1);
         String email = matcher.group(2);
         NewUser newUser;
         if (Strings.isBlank(phone) && Strings.isNotBlank(email)) {
+            if (userRepository.findByEmail(email).isPresent()) {
+                throw new SocialServiceFieldException("phoneOrEmail", ErrorCode.ALREADY_EXIST);
+            }
             newUser = newUserService.createNewUserWithEmail(email);
         } else {
             newUser = newUserService.createNewUserWithPhone(phone);
