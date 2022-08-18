@@ -38,7 +38,6 @@ public class WebConfigurer implements WebMvcConfigurer, WebServerFactoryCustomiz
     @Override
     public void customize(WebServerFactory server) {
         setMimeMappings(server);
-        // When running in an IDE or with ./mvnw spring-boot:run, set location of the static web assets.
         setLocationForStaticAssets(server);
     }
 
@@ -106,14 +105,14 @@ public class WebConfigurer implements WebMvcConfigurer, WebServerFactoryCustomiz
         //TODO Allow necessary cors rules
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("Authorization,Link,X-Total-Count");
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(1800L);
         source.registerCorsConfiguration("/api/**", configuration);
-        source.registerCorsConfiguration("/v2/api-docs", configuration);
+        source.registerCorsConfiguration("/v3/api-docs", configuration);
         return new CorsFilter(source);
     }
 
