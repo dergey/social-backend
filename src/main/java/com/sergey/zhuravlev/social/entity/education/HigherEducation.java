@@ -6,14 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.time.LocalDate;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DiscriminatorValue(value = "HIGHER_EDUCATION")
 public class HigherEducation extends Education {
 
     @Column(name = "faculty", length = 160)
@@ -24,7 +25,5 @@ public class HigherEducation extends Education {
 
     @Column(name = "status", length = 80)
     private String status;
-
-    private LocalDate releaseAt;
 
 }

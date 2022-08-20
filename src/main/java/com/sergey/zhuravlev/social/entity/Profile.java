@@ -64,6 +64,7 @@ public class Profile {
     @Column(name = "second_name", nullable = false)
     private String secondName;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     private Gender gender;
 
@@ -73,6 +74,7 @@ public class Profile {
     @Column(name = "overview", length = 500)
     private String overview;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "relationship_status", length = 20)
     private RelationshipStatus relationshipStatus;
 

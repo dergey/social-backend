@@ -5,6 +5,7 @@ import com.sergey.zhuravlev.social.entity.NewUser;
 import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.User;
 import com.sergey.zhuravlev.social.enums.ErrorCode;
+import com.sergey.zhuravlev.social.enums.Gender;
 import com.sergey.zhuravlev.social.enums.RegistrationStatus;
 import com.sergey.zhuravlev.social.exception.SocialServiceException;
 import com.sergey.zhuravlev.social.exception.SocialServiceFieldException;
@@ -89,14 +90,15 @@ public class RegistrationService {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public User completeRegistration(UUID continuationCode, String rawPassword, String username,
                                      String firstName, String middleName, String secondName,
-                                     String city, LocalDate birthDate) {
+                                     Gender gender, LocalDate birthDate) {
         NewUser newUser = newUserService.getNewUserByContinuationCode(continuationCode);
         if (!newUser.getRegistrationStatus().equals(RegistrationStatus.PERSONAL_DATA_AWAIT)) {
             throw new SocialServiceException(ErrorCode.INVALID_NEW_USER_STATE);
         }
         User user = userService.createUserWithEmail(newUser.getEmail(), rawPassword);
         Image avatarImage = imageService.generateAvatarImage(user, firstName, secondName);
-        Profile profile = profileService.createProfile(user, username, avatarImage, firstName, middleName, secondName, city, birthDate);
+        Profile profile = profileService.createProfile(user, username, avatarImage, firstName, middleName, secondName,
+                gender, birthDate);
         user.setProfile(profile);
         return user;
     }
