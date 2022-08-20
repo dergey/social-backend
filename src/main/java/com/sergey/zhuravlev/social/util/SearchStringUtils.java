@@ -6,12 +6,12 @@ public class SearchStringUtils {
 
     public static String getSearchString(Profile profile) {
         StringBuilder sb = new StringBuilder();
-        sb.append(profile.getFirstName()).append(" ").append(profile.getSecondName().toUpperCase());
+        sb.append(profile.getFirstName()).append(" ").append(profile.getSecondName());
         if (profile.getMiddleName() != null) {
             sb.append(" ").append(profile.getMiddleName());
         }
         sb.append(" ").append(profile.getUsername());
-        return sb.toString();
+        return sb.toString().toUpperCase();
     }
 
 }
