@@ -57,7 +57,7 @@ public class RegistrationController {
     @PostMapping("/complete")
     public UserDto completeRegistration(@Valid @RequestBody CompleteRegistrationDto dto) {
         User user = registrationService.completeRegistration(dto.getContinuationCode(), dto.getPassword(),
-                dto.getUsername(), dto.getFirstName(), dto.getMiddleName(), dto.getSecondName(), dto.getCity(),
+                dto.getUsername(), dto.getFirstName(), dto.getMiddleName(), dto.getSecondName(), dto.getGender(),
                 dto.getBirthDate());
         return userMapper.userToUserDto(user);
     }

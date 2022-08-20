@@ -13,6 +13,7 @@ import com.sergey.zhuravlev.social.util.ImageResponseUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +60,7 @@ public class ProfileController {
     }
 
     @GetMapping("/{username}/avatar")
-    public ResponseEntity<byte[]> getProfileAvatar(@PathVariable String username, WebRequest request) {
+    public ResponseEntity<Resource> getProfileAvatar(@PathVariable String username, WebRequest request) {
         Profile profile = profileService.getProfile(username);
 
         // Check for data changes
@@ -68,18 +69,18 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
-        Image image = imageService.fetchImage(profile.getAvatar());
+        Resource image = imageService.fetchImageResource(profile.getAvatar());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .lastModified(lastModifiedTimestamp)
-                .contentType(MediaType.valueOf(image.getMimeType()))
-                .body(image.getData());
+                .contentType(MediaType.valueOf(profile.getAvatar().getMimeType()))
+                .body(image);
     }
 
     @GetMapping(value = "/{username}/avatar", params = "size")
-    public ResponseEntity<byte[]> getProfileAvatarWithSize(@PathVariable String username,
-                                                           @RequestParam(name = "size") ImageSize size,
-                                                           WebRequest request) {
+    public ResponseEntity<Resource> getProfileAvatarPreview(@PathVariable String username,
+                                                            @RequestParam(name = "size") ImageSize size,
+                                                            WebRequest request) {
         Profile profile = profileService.getProfile(username);
 
         // Check for data changes
@@ -88,12 +89,12 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
-        Image image = imageService.fetchPreviewImage(profile.getAvatar());
+        Resource resource = imageService.fetchPreviewImageResource(profile.getAvatar(), size.getWidth(), size.getHeight());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .lastModified(lastModifiedTimestamp)
-                .contentType(MediaType.valueOf(image.getMimeType()))
-                .body(image.getPreview());
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(resource);
     }
 
 

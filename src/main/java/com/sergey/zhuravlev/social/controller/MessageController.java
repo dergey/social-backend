@@ -5,6 +5,7 @@ import com.sergey.zhuravlev.social.entity.Chat;
 import com.sergey.zhuravlev.social.entity.Image;
 import com.sergey.zhuravlev.social.entity.Message;
 import com.sergey.zhuravlev.social.entity.User;
+import com.sergey.zhuravlev.social.enums.ImageSize;
 import com.sergey.zhuravlev.social.mapper.MessageMapper;
 import com.sergey.zhuravlev.social.service.ChatService;
 import com.sergey.zhuravlev.social.service.ImageService;
@@ -13,6 +14,7 @@ import com.sergey.zhuravlev.social.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -90,8 +92,8 @@ public class MessageController {
     // Getting messages image
 
     @GetMapping("/{messageId}/image")
-    public ResponseEntity<byte[]> getMessageImage(@PathVariable Long chatId, @PathVariable Long messageId,
-                                                  WebRequest request) {
+    public ResponseEntity<Resource> getMessageImage(@PathVariable Long chatId, @PathVariable Long messageId,
+                                                    WebRequest request) {
         Chat chat = chatService.getChat(userService.getCurrentUser(), chatId);
         Message message = messageService.getMessage(chat, messageId);
 
@@ -102,16 +104,19 @@ public class MessageController {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
-        Image image = imageService.fetchImage(message.getImage());
+        // Fetch image resource
+        Resource resource = imageService.fetchImageResource(message.getImage());
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .contentType(MediaType.valueOf(image.getMimeType()))
-                .body(image.getData());
+                .contentType(MediaType.valueOf(message.getImage().getMimeType()))
+                .body(resource);
     }
 
-    @GetMapping("/{messageId}/image_preview")
-    public ResponseEntity<byte[]> getMessageImagePreview(@PathVariable Long chatId, @PathVariable Long messageId,
-                                                         WebRequest request) {
+    @GetMapping(value = "/{messageId}/image", params = "size")
+    public ResponseEntity<Resource> getMessageImagePreview(@PathVariable Long chatId, @PathVariable Long messageId,
+                                                           @RequestParam(name = "size") ImageSize size,
+                                                           WebRequest request) {
         Chat chat = chatService.getChat(userService.getCurrentUser(), chatId);
         Message message = messageService.getMessage(chat, messageId);
 
@@ -122,11 +127,11 @@ public class MessageController {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
-        Image image = imageService.fetchPreviewImage(message.getImage());
+        Resource resource = imageService.fetchPreviewImageResource(message.getImage(), size.getWidth(), size.getHeight());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.IMAGE_JPEG)
-                .body(image.getPreview());
+                .body(resource);
     }
 
 }

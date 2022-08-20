@@ -1,6 +1,7 @@
 package com.sergey.zhuravlev.social.dto.registration;
 
 import com.sergey.zhuravlev.social.enums.ErrorCode;
+import com.sergey.zhuravlev.social.enums.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,10 +45,9 @@ public class CompleteRegistrationDto {
     @NotBlank(message = ErrorCode.NOT_BLANK_CODE)
     private String secondName;
 
-    @Schema(example = "Tokio")
-    @Length(max = 100, message = ErrorCode.WRONG_LENGTH_CODE)
-    @NotBlank(message = ErrorCode.NOT_BLANK_CODE)
-    private String city;
+    @Schema(example = "MALE")
+    @NotNull(message = ErrorCode.NOT_NULL_CODE)
+    private Gender gender;
 
     @Schema(example = "1970-01-01", format = "past")
     @Past(message = ErrorCode.PAST_REQUIRED_CODE)
