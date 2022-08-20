@@ -1,0 +1,11 @@
+social.security.authentication.jwt.secret=
+# This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 `128` on your command line to generate a 512 bits one)
+social.security.authentication.jwt.base64Secret=YmExMDdmMjliY2M3MzMwMzgxOTgwMTE0MjNkYjUyYjA5NjQyNzYxMTRhYTU2Y2M2NmRlZmJmZDM4NGU4OWM3M2NiMjk4OTNiMjA2YzQwNjRkM2VkOGY0ODRmZDY2ZWU2NjM1ODQwNmRjOGNiOTkxNjQ2M2UwNGM5Y2ZiZGQ1M2Y=
+social.security.authentication.jwt.tokenValidityInSeconds=86400
+social.security.authentication.jwt.tokenValidityInSecondsForRememberMe=2592000
+
+social.storage.location=D:\\TEMP\\social
+
+social.friend-request.timeout.period=P7D
+
+confirmation.test=true
