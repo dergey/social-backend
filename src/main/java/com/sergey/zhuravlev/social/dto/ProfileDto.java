@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
 
 @Getter
 @Setter
@@ -18,7 +17,6 @@ public class ProfileDto {
 
     private String username;
     private ImageDto avatar;
-    private Collection<String> images;
     private String firstName;
     private String middleName;
     private String secondName;

@@ -3,6 +3,7 @@ package com.sergey.zhuravlev.social.service;
 import com.sergey.zhuravlev.social.entity.Image;
 import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.User;
+import com.sergey.zhuravlev.social.entity.predicate.ProfilePredicateBuilder;
 import com.sergey.zhuravlev.social.enums.Gender;
 import com.sergey.zhuravlev.social.exception.FieldAlreadyExistsException;
 import com.sergey.zhuravlev.social.repository.ProfileRepository;
@@ -25,8 +26,8 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
 
     @Transactional(readOnly = true)
-    public Page<Profile> searchProfile(String searchQuery, Pageable pageable) {
-        return profileRepository.findAllBySearchStringContainingIgnoreCase(searchQuery, pageable);
+    public Page<Profile> searchProfile(ProfilePredicateBuilder builder, Pageable pageable) {
+        return profileRepository.findAll(builder.build(), pageable);
     }
 
     @Transactional(readOnly = true)
