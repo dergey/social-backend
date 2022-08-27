@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -22,8 +21,11 @@ public class User {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "email", length = 191, nullable = false, updatable = false, unique = true)
+    @Column(name = "email", length = 191, unique = true)
     private String email;
+
+    @Column(name = "phone", length = 15, unique = true)
+    private String phone;
 
     @Column(name = "password", length = 60, nullable = false)
     private String password;

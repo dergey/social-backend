@@ -44,6 +44,22 @@ public class UserService {
         }
         User user = new User(null,
                 email,
+                null,
+                passwordEncoder.encode(rawPassword),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                null);
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User createUserWithPhone(String phone, String rawPassword) {
+        if (userRepository.findByPhone(phone).isPresent()) {
+            throw new FieldAlreadyExistsException("Phone already registered", "phone", phone);
+        }
+        User user = new User(null,
+                null,
+                phone,
                 passwordEncoder.encode(rawPassword),
                 LocalDateTime.now(),
                 LocalDateTime.now(),

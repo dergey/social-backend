@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,7 +96,14 @@ public class RegistrationService {
         if (!newUser.getRegistrationStatus().equals(RegistrationStatus.PERSONAL_DATA_AWAIT)) {
             throw new SocialServiceException(ErrorCode.INVALID_NEW_USER_STATE);
         }
-        User user = userService.createUserWithEmail(newUser.getEmail(), rawPassword);
+        User user;
+        if (!Objects.isNull(newUser.getEmail())) {
+             user = userService.createUserWithEmail(newUser.getEmail(), rawPassword);
+        } else if (!Objects.isNull(newUser.getPhone())) {
+            user = userService.createUserWithPhone(newUser.getEmail(), rawPassword);
+        } else {
+            throw new IllegalStateException("Email or phone not provided");
+        }
         Image avatarImage = imageService.generateAvatarImage(user, firstName, secondName);
         Profile profile = profileService.createProfile(user, username, avatarImage, firstName, middleName, secondName,
                 gender, birthDate);
