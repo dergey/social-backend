@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="00000000000001" author="xpolr">
+
+        <createTable tableName="users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(191)">
+                <constraints unique="true" uniqueConstraintName="ux_users_email"/>
+            </column>
+            <column name="phone" type="varchar(15)">
+                <constraints unique="true" uniqueConstraintName="ux_users_phone"/>
+            </column>
+            <column name="password_hash" type="varchar(60)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="confirmation_role" type="varchar(20)"/>
+            <column name="confirmation_type" type="varchar(10)"/>
+            <column name="confirmation_manual_code" type="varchar(40)"/>
+            <column name="confirmation_manual_code_tries" type="smallint"/>
+            <column name="confirmation_link_code" type="varchar(40)"/>
+            <column name="confirmation_valid_until" type="timestamp"/>
+            <column name="create_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="ix_users_confirmation_link_code" tableName="users">
+            <column name="confirmation_link_code"/>
+        </createIndex>
+
+
+        <createTable tableName="new_users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="continuation_code" type="varchar(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(191)">
+                <constraints unique="true" uniqueConstraintName="ux_new_users_email"/>
+            </column>
+            <column name="phone" type="varchar(15)">
+                <constraints unique="true" uniqueConstraintName="ux_new_users_phone"/>
+            </column>
+            <column name="registration_status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="confirmation_type" type="varchar(10)"/>
+            <column name="confirmation_manual_code" type="varchar(40)"/>
+            <column name="confirmation_manual_code_tries" type="smallint"/>
+            <column name="confirmation_link_code" type="varchar(40)"/>
+            <column name="confirmation_valid_until" type="timestamp"/>
+            <column name="create_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="ix_new_users_continuation_code" tableName="new_users">
+            <column name="continuation_code"/>
+        </createIndex>
+        <createIndex indexName="ix_new_users_confirmation_link_code" tableName="new_users">
+            <column name="confirmation_link_code"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>
