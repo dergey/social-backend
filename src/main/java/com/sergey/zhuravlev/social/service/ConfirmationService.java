@@ -58,6 +58,11 @@ public class ConfirmationService {
         }
     }
 
+    public boolean isActualConfirmation(Confirmation confirmation) {
+        return confirmation.getValidUntil().isBefore(LocalDateTime.now()) &&
+                confirmation.getManualCodeTries() < manualCodeMaxTries;
+    }
+
     public void validateManualCode(Confirmation confirmation, String code) {
         if (confirmation.getValidUntil().isBefore(LocalDateTime.now())) {
             throw new SocialServiceException(ErrorCode.CONFIRMATION_HAS_EXPIRED);

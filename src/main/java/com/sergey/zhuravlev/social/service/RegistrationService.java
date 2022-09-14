@@ -10,6 +10,7 @@ import com.sergey.zhuravlev.social.enums.RegistrationStatus;
 import com.sergey.zhuravlev.social.exception.SocialServiceException;
 import com.sergey.zhuravlev.social.exception.SocialServiceFieldException;
 import com.sergey.zhuravlev.social.repository.UserRepository;
+import com.sergey.zhuravlev.social.contrains.PatternConstrains;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,10 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class RegistrationService {
-
-    Pattern EMAIL_OR_PHONE_PATTERN = Pattern.compile("(\\d{7,15})|(\\w+@\\w+\\.\\w{2,3})");
 
     private final NewUserService newUserService;
     private final UserService userService;
@@ -37,7 +35,7 @@ public class RegistrationService {
 
     @Transactional
     public NewUser startRegistration(String phoneOrEmail) {
-        Matcher matcher = EMAIL_OR_PHONE_PATTERN.matcher(phoneOrEmail);
+        Matcher matcher = PatternConstrains.EMAIL_OR_PHONE_PATTERN.matcher(phoneOrEmail);
         if (!matcher.matches()) {
             throw new SocialServiceFieldException("phoneOrEmail", ErrorCode.INVALID_EMAIL_OR_PHONE_FORMAT);
         }
@@ -55,7 +53,7 @@ public class RegistrationService {
         return newUser;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = {SocialServiceException.class})
+    @Transactional(noRollbackFor = {SocialServiceException.class})
     public NewUser confirmByManualCode(UUID continuationCode, String manualCode) {
         NewUser newUser = newUserService.getNewUserByContinuationCode(continuationCode);
         if (!newUser.getRegistrationStatus().equals(RegistrationStatus.EMAIL_CONFIRMATION) &&

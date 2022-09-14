@@ -1,6 +1,7 @@
-package com.sergey.zhuravlev.social.dto.registration;
+package com.sergey.zhuravlev.social.dto.confirmation;
 
 import com.sergey.zhuravlev.social.enums.ErrorCode;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,9 +15,13 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContinuationDto {
+public class ManualCodeConfirmationDto {
 
     @NotNull(message = ErrorCode.NOT_NULL_CODE)
     private UUID continuationCode;
+
+    @Schema(example = "11111")
+    @NotBlank(message = ErrorCode.NOT_BLANK_CODE)
+    private String manualCode;
 
 }

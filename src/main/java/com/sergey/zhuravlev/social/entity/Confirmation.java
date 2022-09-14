@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class Confirmation {
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
+    @Column(name = "type", length = 10)
     private ConfirmationType type;
 
     @Column(name = "manual_code", length = 40)

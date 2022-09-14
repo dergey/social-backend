@@ -1,5 +1,7 @@
 package com.sergey.zhuravlev.social.validation;
 
+import com.sergey.zhuravlev.social.contrains.PatternConstrains;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -11,7 +13,7 @@ public class EmailOrPhoneValidator implements ConstraintValidator<EmailOrPhone, 
 
     @Override
     public boolean isValid(String contactField, ConstraintValidatorContext cxt) {
-        return contactField != null && contactField.matches("\\d{7,15}|\\w+@\\w+\\.\\w{2,3}") && (contactField.length() >= 7) && (contactField.length() <= 191);
+        return contactField != null && contactField.matches(PatternConstrains.EMAIL_OR_PHONE_PATTERN_VALUE) && (contactField.length() >= 7) && (contactField.length() <= 191);
     }
 
 }

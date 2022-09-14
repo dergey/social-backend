@@ -17,8 +17,13 @@ public enum ErrorCode {
     INVALID_NEW_USER_STATE,
     TOO_MANY_CONFIRMATION_TRIES,
 
+    // password reset:
+    INVALID_PASSWORD_RESET_STATE,
+
     // fields error:
-    INVALID_EMAIL_OR_PHONE_FORMAT;
+    INVALID_EMAIL_OR_PHONE_FORMAT,
+    //ALREADY_EXIST,
+    IN_USE;
 
     public static final String NOT_BLANK_CODE = "NOT_BLANK";
     public static final String NOT_NULL_CODE = "NOT_NULL";

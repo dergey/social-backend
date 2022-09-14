@@ -1,6 +1,8 @@
 package com.sergey.zhuravlev.social.controller;
 
+import com.sergey.zhuravlev.social.dto.ContinuationDto;
 import com.sergey.zhuravlev.social.dto.UserDto;
+import com.sergey.zhuravlev.social.dto.confirmation.ManualCodeConfirmationDto;
 import com.sergey.zhuravlev.social.dto.registration.*;
 import com.sergey.zhuravlev.social.entity.NewUser;
 import com.sergey.zhuravlev.social.entity.User;
