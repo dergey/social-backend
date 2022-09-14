@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.social.config;
+package com.sergey.zhuravlev.social.config.message;
 
 import com.sergey.zhuravlev.social.exception.SocialServiceException;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 
 @Component
-public class ErrorMessageSource {
+public class ErrorMessageResolver {
 
     private final ResourceBundleMessageSource errors;
 
-    public ErrorMessageSource() {
+    public ErrorMessageResolver() {
         errors = new ResourceBundleMessageSource();
         errors.setBasename("errors");
     }
@@ -19,9 +19,5 @@ public class ErrorMessageSource {
     public String getMessage(SocialServiceException exception, Locale locale) {
         return errors.getMessage(exception.getCode().name(), new Object[]{}, locale);
     }
-
-//    public String getMessage(SocialServiceFieldException exception, Locale locale) {
-//        return errors.getMessage(exception.getCode().name(), new Object[]{}, locale);
-//    }
 
 }

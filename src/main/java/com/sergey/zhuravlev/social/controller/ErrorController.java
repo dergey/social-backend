@@ -1,6 +1,6 @@
 package com.sergey.zhuravlev.social.controller;
 
-import com.sergey.zhuravlev.social.config.ErrorMessageSource;
+import com.sergey.zhuravlev.social.config.message.ErrorMessageResolver;
 import com.sergey.zhuravlev.social.dto.ErrorDto;
 import com.sergey.zhuravlev.social.dto.FieldsErrorDto;
 import com.sergey.zhuravlev.social.enums.ErrorCode;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ErrorController {
 
-    private final ErrorMessageSource errors;
+    private final ErrorMessageResolver errors;
 
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({ Exception.class })

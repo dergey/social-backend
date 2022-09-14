@@ -30,6 +30,7 @@ public class RegistrationService {
     private final UserService userService;
     private final ImageService imageService;
     private final ProfileService profileService;
+    private final EmailService emailService;
 
     private final UserRepository userRepository;
 
@@ -47,6 +48,7 @@ public class RegistrationService {
                 throw new SocialServiceFieldException("phoneOrEmail", ErrorCode.ALREADY_EXIST);
             }
             newUser = newUserService.createNewUserWithEmail(email);
+            emailService.sendTemplate(email, "registration.confirmation", "registration.confirmation.ftlh", newUser.getConfirmation());
         } else {
             newUser = newUserService.createNewUserWithPhone(phone);
         }
@@ -83,6 +85,10 @@ public class RegistrationService {
             throw new SocialServiceException(ErrorCode.INVALID_NEW_USER_STATE);
         }
         newUserService.renewConfirmation(newUser);
+        emailService.sendTemplate(newUser.getEmail(),
+                "registration.confirmation",
+                "registration.confirmation.ftlh",
+                newUser.getConfirmation());
         return newUser;
     }
 
