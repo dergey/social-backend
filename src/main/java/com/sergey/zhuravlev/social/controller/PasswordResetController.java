@@ -6,6 +6,7 @@ import com.sergey.zhuravlev.social.dto.reset.CompletePasswordResetDto;
 import com.sergey.zhuravlev.social.dto.reset.PasswordResetStatusDto;
 import com.sergey.zhuravlev.social.dto.reset.StartPasswordResetDto;
 import com.sergey.zhuravlev.social.entity.PasswordReset;
+import com.sergey.zhuravlev.social.service.PasswordResetFlowService;
 import com.sergey.zhuravlev.social.service.PasswordResetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,41 +24,41 @@ import javax.validation.constraints.NotBlank;
 @RequiredArgsConstructor
 public class PasswordResetController {
 
-    private final PasswordResetService passwordResetService;
+    private final PasswordResetFlowService passwordResetFlowService;
 
     @Operation(description = "Initializes the password reset flow")
     @PostMapping
     public PasswordResetStatusDto startPasswordReset(@Valid @RequestBody StartPasswordResetDto dto) {
-        PasswordReset passwordReset = passwordResetService.startPasswordReset(dto.getPhoneOrEmail());
+        PasswordReset passwordReset = passwordResetFlowService.startPasswordReset(dto.getPhoneOrEmail());
         return new PasswordResetStatusDto(passwordReset.getStatus(), passwordReset.getContinuationCode());
     }
 
     @Operation(description = "Confirms email or phone by code")
     @PostMapping("/confirm/code")
     public PasswordResetStatusDto confirmByCode(@Valid @RequestBody ManualCodeConfirmationDto dto) {
-        PasswordReset passwordReset = passwordResetService.confirmByManualCode(dto.getContinuationCode(), dto.getManualCode());
+        PasswordReset passwordReset = passwordResetFlowService.confirmPasswordResetByManualCode(dto.getContinuationCode(), dto.getManualCode());
         return new PasswordResetStatusDto(passwordReset.getStatus(), passwordReset.getContinuationCode());
     }
 
     @Operation(description = "Confirms email by link (long code)")
     @PostMapping("/confirm/link")
     public PasswordResetStatusDto confirmByLink(@Valid @NotBlank @RequestParam @Schema(example = "R0dj6wT9Uu8fuYXk") String linkCode) {
-        PasswordReset passwordReset = passwordResetService.confirmByLinkCode(linkCode);
+        PasswordReset passwordReset = passwordResetFlowService.confirmPasswordResetByLinkCode(linkCode);
         return new PasswordResetStatusDto(passwordReset.getStatus(), passwordReset.getContinuationCode());
     }
 
     @Operation(description = "Re-sends confirmation message")
     @PostMapping("/resend")
     public PasswordResetStatusDto resendConfirmation(@Valid @RequestBody ContinuationDto continuationDto) {
-        PasswordReset passwordReset = passwordResetService.resendConfirmation(continuationDto.getContinuationCode());
+        PasswordReset passwordReset = passwordResetFlowService.resendPasswordResetConfirmation(continuationDto.getContinuationCode());
         return new PasswordResetStatusDto(passwordReset.getStatus(), passwordReset.getContinuationCode());
     }
 
     @Operation(description = "Completes the password reset flow, sets the new password for the user")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/complete")
-    public void completeRegistration(@Valid @RequestBody CompletePasswordResetDto dto) {
-        passwordResetService.completePasswordReset(dto.getContinuationCode(), dto.getPassword());
+    public void completePasswordReset(@Valid @RequestBody CompletePasswordResetDto dto) {
+        passwordResetFlowService.completePasswordReset(dto.getContinuationCode(), dto.getPassword());
     }
 
 }

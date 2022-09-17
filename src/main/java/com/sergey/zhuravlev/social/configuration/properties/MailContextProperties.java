@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.social.config.properties;
+package com.sergey.zhuravlev.social.configuration.properties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,5 +12,7 @@ public class MailContextProperties {
     private String frontendHost;
     private String frontendRegistrationLinkPath;
     private String frontendRegistrationLinkCodeParameter;
+    private String frontendPasswordResetLinkPath;
+    private String frontendPasswordResetLinkCodeParameter;
 
 }

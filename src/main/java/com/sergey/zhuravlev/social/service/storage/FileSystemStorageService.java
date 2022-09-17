@@ -1,6 +1,6 @@
 package com.sergey.zhuravlev.social.service.storage;
 
-import com.sergey.zhuravlev.social.config.properties.StorageProperties;
+import com.sergey.zhuravlev.social.configuration.properties.StorageProperties;
 import com.sergey.zhuravlev.social.service.storage.exception.StorageException;
 import com.sergey.zhuravlev.social.service.storage.exception.StorageFileNotFoundException;
 import lombok.SneakyThrows;

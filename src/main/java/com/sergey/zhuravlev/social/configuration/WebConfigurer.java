@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.social.config;
+package com.sergey.zhuravlev.social.configuration;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;

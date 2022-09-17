@@ -1,6 +1,6 @@
 package com.sergey.zhuravlev.social.controller;
 
-import com.sergey.zhuravlev.social.config.message.ErrorMessageResolver;
+import com.sergey.zhuravlev.social.configuration.message.ErrorMessageResolver;
 import com.sergey.zhuravlev.social.dto.ErrorDto;
 import com.sergey.zhuravlev.social.dto.FieldsErrorDto;
 import com.sergey.zhuravlev.social.enums.ErrorCode;

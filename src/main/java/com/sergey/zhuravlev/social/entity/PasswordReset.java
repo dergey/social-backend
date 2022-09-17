@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
@@ -21,8 +22,11 @@ import java.util.UUID;
 public class PasswordReset {
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @Column(name = "user_id")
+    private Long id;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
     @Column(name = "password_reset_status", length = 20, nullable = false)

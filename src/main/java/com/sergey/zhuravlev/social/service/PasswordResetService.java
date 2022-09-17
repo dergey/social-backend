@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
@@ -27,53 +28,46 @@ public class PasswordResetService {
 
     private final ConfirmationService confirmationService;
 
-    private final PasswordEncoder passwordEncoder;
+    @Transactional
+    public PasswordReset createPasswordResetByEmail(String email) {
+        passwordResetRepository.findByUserEmail(email)
+                .filter(r -> !r.getStatus().isFinal() && confirmationService.isActualConfirmation(r.getConfirmation()))
+                .ifPresent(r -> { throw new SocialServiceException(ErrorCode.IN_USE); });
+        return userRepository.findByEmail(email)
+                .map(this::createPasswordResetByEmail)
+                .map(passwordResetRepository::save)
+                .orElseThrow(() -> new SocialServiceException(ErrorCode.NOT_FOUND));
+    }
 
     @Transactional
-    public PasswordReset startPasswordReset(String phoneOrEmail) {
-        Matcher matcher = PatternConstrains.EMAIL_OR_PHONE_PATTERN.matcher(phoneOrEmail);
-        if (!matcher.matches()) {
-            throw new SocialServiceFieldException("phoneOrEmail", ErrorCode.INVALID_EMAIL_OR_PHONE_FORMAT);
-        }
-        String phone = matcher.group(1);
-        String email = matcher.group(2);
-        PasswordReset passwordReset;
-        if (Strings.isNotBlank(email)) {
-            passwordResetRepository.findByUserEmail(email)
-                    .filter(r -> !r.getStatus().isFinal() && confirmationService.isActualConfirmation(r.getConfirmation()))
-                    .ifPresent(r -> { throw new SocialServiceException(ErrorCode.IN_USE); });
-            passwordReset = userRepository.findByEmail(email)
-                    .map(this::createPasswordResetByEmail)
-                    .orElseThrow(() -> new SocialServiceException(ErrorCode.NOT_FOUND));
-        } else if (Strings.isNotBlank(phone)) {
-            passwordResetRepository.findByUserPhone(phone)
-                    .filter(r -> !r.getStatus().isFinal() && confirmationService.isActualConfirmation(r.getConfirmation()))
-                    .ifPresent(r -> { throw new SocialServiceException(ErrorCode.IN_USE); });
-            passwordReset = userRepository.findByPhone(phone)
-                    .map(this::createPasswordResetByPhone)
-                    .orElseThrow(() -> new SocialServiceException(ErrorCode.NOT_FOUND));
-        } else {
-            throw new IllegalArgumentException("phoneOrEmail");
-        }
-        return passwordResetRepository.save(passwordReset);
+    public PasswordReset createPasswordResetByPhone(String phone) {
+        passwordResetRepository.findByUserPhone(phone)
+                .filter(r -> !r.getStatus().isFinal() && confirmationService.isActualConfirmation(r.getConfirmation()))
+                .ifPresent(r -> { throw new SocialServiceException(ErrorCode.IN_USE); });
+        return userRepository.findByPhone(phone)
+                .map(this::createPasswordResetByPhone)
+                .map(passwordResetRepository::save)
+                .orElseThrow(() -> new SocialServiceException(ErrorCode.NOT_FOUND));
     }
 
     private PasswordReset createPasswordResetByEmail(User userWithEmail) {
-        return new PasswordReset(userWithEmail,
+        return new PasswordReset(userWithEmail.getId(),
+                userWithEmail,
                 PasswordResetStatus.EMAIL_CONFIRMATION,
                 UUID.randomUUID(),
                 confirmationService.createEmailConfirmation());
     }
 
     private PasswordReset createPasswordResetByPhone(User userWithPhone) {
-        return new PasswordReset(userWithPhone,
+        return new PasswordReset(userWithPhone.getId(),
+                userWithPhone,
                 PasswordResetStatus.PHONE_CONFIRMATION,
                 UUID.randomUUID(),
                 confirmationService.createPhoneConfirmation());
     }
 
     @Transactional(noRollbackFor = {SocialServiceException.class})
-    public PasswordReset confirmByManualCode(UUID continuationCode, String manualCode) {
+    public PasswordReset confirmPasswordResetByManualCode(UUID continuationCode, String manualCode) {
         PasswordReset passwordReset = passwordResetRepository.findByContinuationCode(continuationCode)
                 .orElseThrow(() -> new SocialServiceFieldException("continuationCode", ErrorCode.NOT_FOUND));
         if (!passwordReset.getStatus().equals(PasswordResetStatus.EMAIL_CONFIRMATION) &&
@@ -87,7 +81,7 @@ public class PasswordResetService {
     }
 
     @Transactional(noRollbackFor = {SocialServiceException.class})
-    public PasswordReset confirmByLinkCode(String linkCode) {
+    public PasswordReset confirmPasswordResetByLinkCode(String linkCode) {
         PasswordReset passwordReset = passwordResetRepository.findByConfirmationLinkCode(linkCode)
                 .orElseThrow(() -> new SocialServiceFieldException("continuationCode", ErrorCode.NOT_FOUND));
         if (!passwordReset.getStatus().equals(PasswordResetStatus.EMAIL_CONFIRMATION) &&
@@ -101,7 +95,7 @@ public class PasswordResetService {
     }
 
     @Transactional
-    public PasswordReset resendConfirmation(UUID continuationCode) {
+    public PasswordReset regeneratePasswordResetConfirmation(UUID continuationCode) {
         PasswordReset passwordReset = passwordResetRepository.findByContinuationCode(continuationCode)
                 .orElseThrow(() -> new SocialServiceFieldException("continuationCode", ErrorCode.NOT_FOUND));
         if (!passwordReset.getStatus().equals(PasswordResetStatus.EMAIL_CONFIRMATION) &&
@@ -114,14 +108,14 @@ public class PasswordResetService {
     }
 
     @Transactional
-    public void completePasswordReset(UUID continuationCode, String rawPassword) {
+    public PasswordReset removePasswordReset(UUID continuationCode) {
         PasswordReset passwordReset = passwordResetRepository.findByContinuationCode(continuationCode)
                 .orElseThrow(() -> new SocialServiceFieldException("continuationCode", ErrorCode.NOT_FOUND));
         if (!passwordReset.getStatus().equals(PasswordResetStatus.PASSWORD_AWAIT)) {
             throw new SocialServiceException(ErrorCode.INVALID_PASSWORD_RESET_STATE);
         }
-        User user = passwordReset.getUser();
-        user.setPassword(passwordEncoder.encode(rawPassword));
+        passwordResetRepository.delete(passwordReset);
+        return passwordReset;
     }
 
 }

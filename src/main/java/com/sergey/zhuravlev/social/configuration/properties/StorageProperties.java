@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.social.config.properties;
+package com.sergey.zhuravlev.social.configuration.properties;
 
 import lombok.Getter;
 import lombok.Setter;

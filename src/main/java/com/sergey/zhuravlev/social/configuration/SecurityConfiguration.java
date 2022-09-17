@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.social.config;
+package com.sergey.zhuravlev.social.configuration;
 
 import com.sergey.zhuravlev.social.security.jwt.JWTConfigurer;
 import com.sergey.zhuravlev.social.security.jwt.TokenProvider;
@@ -72,9 +72,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/test/**").permitAll()
             .antMatchers("/api/authenticate").permitAll()
             .antMatchers("/api/registration/**").permitAll()
-            .antMatchers("/api/activate").permitAll()
-            .antMatchers("/api/account/reset-password/init").permitAll()
-            .antMatchers("/api/account/reset-password/finish").permitAll()
+            .antMatchers("/api/password-reset/**").permitAll()
             .antMatchers("/api/**").authenticated()
         .and()
             .httpBasic()

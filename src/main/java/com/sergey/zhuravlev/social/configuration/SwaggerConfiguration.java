@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.social.config;
+package com.sergey.zhuravlev.social.configuration;
 
 
 import io.swagger.v3.oas.models.ExternalDocumentation;

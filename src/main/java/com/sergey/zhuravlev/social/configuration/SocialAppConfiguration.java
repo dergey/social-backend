@@ -1,7 +1,7 @@
-package com.sergey.zhuravlev.social.config;
+package com.sergey.zhuravlev.social.configuration;
 
-import com.sergey.zhuravlev.social.config.properties.MailContextProperties;
-import com.sergey.zhuravlev.social.config.properties.StorageProperties;
+import com.sergey.zhuravlev.social.configuration.properties.MailContextProperties;
+import com.sergey.zhuravlev.social.configuration.properties.StorageProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;

@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.social.config.message;
+package com.sergey.zhuravlev.social.configuration.message;
 
 import com.sergey.zhuravlev.social.exception.SocialServiceException;
 import org.springframework.context.support.ResourceBundleMessageSource;
