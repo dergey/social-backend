@@ -1,4 +1,3 @@
-# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
 version: '3.8'
 services:
   social-app:
@@ -7,10 +6,9 @@ services:
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=docker
-      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
       - SPRING_DATASOURCE_URL=jdbc:mysql://social-mysql:3306/social?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
       - SPRING_LIQUIBASE_URL=jdbc:mysql://social-mysql:3306/social?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
-      - PRELOAD_SLEEP=30 # gives time for other services to boot before the application
+      - PRELOAD_SLEEP=5 # gives time for other services to boot before the application
     ports:
       - "8050:8080"
     volumes:
@@ -18,11 +16,25 @@ services:
   social-mysql:
     container_name: social-mysql
     image: mysql:8.0.28
-    # volumes:
-    #   - ~/volumes/jhipster/social/mysql/:/var/lib/mysql/
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=social
     ports:
       - "127.0.0.1:3306:3306"
     command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+  keycloak:
+    container_name: social-keycloak
+    image: quay.io/keycloak/keycloak:19.0.1
+    command: ['start-dev --import-realm']
+    volumes:
+      - ./realm-config:/opt/keycloak/data/import
+    environment:
+      - KC_DB=dev-file
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_FEATURES=scripts
+      - KC_HTTP_PORT=9080
+      - KC_HTTPS_PORT=9443
+    ports:
+      - "9080:9080"
+      - "9443:9443"

@@ -28,9 +28,6 @@ public class User {
     @Column(name = "phone", length = 15, unique = true)
     private String phone;
 
-    @Column(name = "password", length = 60, nullable = false)
-    private String password;
-
     @Column(name = "create_at", nullable = false, updatable = false)
     private LocalDateTime createAt;
 

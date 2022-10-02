@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 public class UserService {
 
     public final UserRepository userRepository;
-    public final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public User getCurrentUser() {
@@ -45,7 +44,6 @@ public class UserService {
         User user = new User(null,
                 email,
                 null,
-                passwordEncoder.encode(rawPassword),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 null);
@@ -60,7 +58,6 @@ public class UserService {
         User user = new User(null,
                 null,
                 phone,
-                passwordEncoder.encode(rawPassword),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 null);
@@ -70,7 +67,6 @@ public class UserService {
     @Transactional
     public User updateUserPassword(Long userId, String rawPassword) {
         User user = userRepository.getById(userId);
-        user.setPassword(passwordEncoder.encode(rawPassword));
         return user;
     }
 
