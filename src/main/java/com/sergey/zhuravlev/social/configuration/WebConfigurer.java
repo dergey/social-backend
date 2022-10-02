@@ -3,6 +3,7 @@ package com.sergey.zhuravlev.social.configuration;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.sergey.zhuravlev.social.configuration.properties.CorsProperties;
 import com.sergey.zhuravlev.social.converter.PageSerializer;
 import com.sergey.zhuravlev.social.converter.StringToEnumConverter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -34,6 +36,8 @@ import static java.net.URLDecoder.decode;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfigurer implements WebMvcConfigurer, WebServerFactoryCustomizer<WebServerFactory> {
+
+    private final CorsProperties corsProperties;
 
     @Override
     public void customize(WebServerFactory server) {
@@ -99,21 +103,15 @@ public class WebConfigurer implements WebMvcConfigurer, WebServerFactoryCustomiz
         return new SimpleModule().addSerializer(Page.class, new PageSerializer());
     }
 
-
     @Bean
     public CorsFilter corsFilter() {
-        //TODO Allow necessary cors rules
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.addExposedHeader("Authorization,Link,X-Total-Count");
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(1800L);
-        source.registerCorsConfiguration("/api/**", configuration);
-        source.registerCorsConfiguration("/v3/api-docs", configuration);
+        CorsConfiguration config = corsProperties;
+        if (!CollectionUtils.isEmpty(config.getAllowedOrigins()) || !CollectionUtils.isEmpty(config.getAllowedOriginPatterns())) {
+            source.registerCorsConfiguration("/api/**", config);
+            source.registerCorsConfiguration("/v3/api-docs", config);
+            source.registerCorsConfiguration("/swagger-ui/**", config);
+        }
         return new CorsFilter(source);
     }
-
 }

@@ -26,20 +26,21 @@ public class DomainUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(final String login) {
+
         if (new EmailValidator().isValid(login, null)) {
             return userRepository.findByEmail(login)
-                .map(user -> createSpringSecurityUser(login, user))
+                .map(this::createSpringSecurityUser)
                 .orElseThrow(() -> new UsernameNotFoundException("User with email " + login + " was not found in the database"));
         }
 
         String lowercaseLogin = login.toLowerCase(Locale.ENGLISH);
         return userRepository.findByEmail(lowercaseLogin)
-            .map(user -> createSpringSecurityUser(lowercaseLogin, user))
+            .map(this::createSpringSecurityUser)
             .orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database"));
 
     }
 
-    private org.springframework.security.core.userdetails.User createSpringSecurityUser(String lowercaseLogin, User user) {
+    private org.springframework.security.core.userdetails.User createSpringSecurityUser(User user) {
 //        if (!user.isActivated()) {
 //            throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
 //        }
