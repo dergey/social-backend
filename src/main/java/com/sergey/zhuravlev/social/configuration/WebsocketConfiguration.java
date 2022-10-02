@@ -36,12 +36,12 @@ public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer 
             .map(origins -> origins.toArray(new String[0]))
             .orElse(new String[0]);
         registry
-            .addEndpoint("/websocket/topic/messages")
+            .addEndpoint("/websocket/messages")
             .setHandshakeHandler(defaultHandshakeHandler())
             .setAllowedOriginPatterns(allowedOriginPatterns)
             .withSockJS();
         registry
-            .addEndpoint("/websocket/topic/friend-requests")
+            .addEndpoint("/websocket/friend-requests")
             .setHandshakeHandler(defaultHandshakeHandler())
             .setAllowedOriginPatterns(allowedOriginPatterns)
             .withSockJS();

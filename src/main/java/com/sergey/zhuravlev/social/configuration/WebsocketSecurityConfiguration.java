@@ -13,6 +13,10 @@ public class WebsocketSecurityConfiguration extends AbstractSecurityWebSocketMes
         messages
             .nullDestMatcher()
             .authenticated()
+            .simpDestMatchers("/topic/messages")
+            .authenticated()
+            .simpDestMatchers("/topic/friend-requests")
+            .authenticated()
             .simpDestMatchers("/topic/**")
             .authenticated()
             .simpTypeMatchers(SimpMessageType.MESSAGE, SimpMessageType.SUBSCRIBE)
