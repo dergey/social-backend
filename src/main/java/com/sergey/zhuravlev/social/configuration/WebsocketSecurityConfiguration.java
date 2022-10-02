@@ -13,20 +13,14 @@ public class WebsocketSecurityConfiguration extends AbstractSecurityWebSocketMes
         messages
             .nullDestMatcher()
             .authenticated()
-            // matches any destination that starts with /topic/
-            // (i.e. cannot send messages directly to /topic/)
-            // (i.e. cannot subscribe to /topic/messages/* to get messages sent to
-            // /topic/messages-user<id>)
             .simpDestMatchers("/topic/**")
-            .permitAll()
-            // catch all
+            .authenticated()
+            .simpTypeMatchers(SimpMessageType.MESSAGE, SimpMessageType.SUBSCRIBE)
+            .denyAll()
             .anyMessage()
             .denyAll();
     }
 
-    /**
-     * Disables CSRF for Websockets.
-     */
     @Override
     protected boolean sameOriginDisabled() {
         return true;
