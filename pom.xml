@@ -15,7 +15,7 @@
     <description>Demo social network</description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>11</java.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <org.hibernate.validator.version>7.0.4.Final</org.hibernate.validator.version>
         <springdoc.openapi.version>1.6.4</springdoc.openapi.version>
@@ -235,7 +235,7 @@
                             </platforms>
                         </from>
                         <to>
-                            <image>social:latest</image>
+                            <image>dergey/social-backend:${project.version}</image>
                         </to>
                         <container>
                             <entrypoint>
@@ -246,12 +246,15 @@
                             <ports>
                                 <port>8080</port>
                             </ports>
+                            <volumes>
+                                <volume>/var/social</volume>
+                            </volumes>
                             <environment>
                                 <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
                                 <PRELOAD_SLEEP>0</PRELOAD_SLEEP>
                             </environment>
                             <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                            <user>1000</user>
+                            <user>root</user>
                         </container>
                         <extraDirectories>
                             <paths>src/main/docker/jib</paths>
