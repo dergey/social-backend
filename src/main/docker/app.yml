@@ -10,6 +10,8 @@ services:
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
       - SPRING_DATASOURCE_URL=jdbc:mysql://social-mysql:3306/social?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
       - SPRING_LIQUIBASE_URL=jdbc:mysql://social-mysql:3306/social?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+      - SPRING_MAIL_HOST=social-mail
+      - SPRING_MAIL_PORT=25
       - PRELOAD_SLEEP=30 # gives time for other services to boot before the application
     ports:
       - "8050:8080"
@@ -26,3 +28,11 @@ services:
     ports:
       - "127.0.0.1:3306:3306"
     command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+  social-mail:
+    container_name: social-mail
+    image: ixdotai/smtp:latest
+    environment:
+      - RELAY_NETWORKS=:127.0.0.1/32 #, :192.168.31.0/24 # it only available in 192.168.31.0 network
+      - MAILNAME=social.xpolr.space
+    ports:
+      - "127.0.0.1:25:25"

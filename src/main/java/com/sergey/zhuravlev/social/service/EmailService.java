@@ -34,7 +34,7 @@ public class EmailService {
 
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false);
-            mimeMessageHelper.setFrom("norelay@xpolr.space");
+            mimeMessageHelper.setFrom("norelay@social.xpolr.space");
             mimeMessageHelper.setTo(recipient);
             mimeMessageHelper.setSubject(this.mailSubjectMessageSource.getMessage(subjectKey, null, Locale.ENGLISH));
             mimeMessageHelper.setText(this.getEmailContent(template, rootObject), true);
