@@ -26,6 +26,7 @@ public class MessageService {
 
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
+    private final MessageWebsocketService messageWebsocketService;
 
     @Transactional(readOnly = true)
     public Message getMessage(Chat chat, Long messageId) {
@@ -66,6 +67,8 @@ public class MessageService {
                 LocalDateTime.now(),
                 false)); // read by other user!
         chat.setLastMessage(message);
+        messageWebsocketService.notifyMessageCreated(message);
+        messageWebsocketService.notifyMessageCreated(linkedMessage);
         return message;
     }
 
@@ -93,6 +96,8 @@ public class MessageService {
                 LocalDateTime.now(),
                 false));
         chat.setLastMessage(message);
+        messageWebsocketService.notifyMessageCreated(message);
+        messageWebsocketService.notifyMessageCreated(linkedMessage);
         return message;
     }
 
@@ -100,13 +105,14 @@ public class MessageService {
     public Message updateTextMessage(Message message, String text) {
         message = messageRepository.getById(message.getId());
         message.setText(text);
+        messageWebsocketService.notifyMessageUpdated(message);
         return message;
     }
 
     @Transactional
     public void deleteMessage(Chat chat, Long messageId) {
         chat = chatRepository.getById(chat.getId());
-        if (!messageRepository.findByIdAndChat(messageId, chat).isPresent()) {
+        if (messageRepository.findByIdAndChat(messageId, chat).isEmpty()) {
             throw new EntityNotFoundException(String.format("Message not found by id %s for chat %s", messageId, chat.getId()));
         }
         if (chat.getLastMessage() != null && chat.getLastMessage().getId().equals(messageId)) {
@@ -118,5 +124,6 @@ public class MessageService {
             }
         }
         messageRepository.deleteByIdAndChat(messageId, chat);
+        messageWebsocketService.notifyMessageDeleted(chat, messageId);
     }
 }

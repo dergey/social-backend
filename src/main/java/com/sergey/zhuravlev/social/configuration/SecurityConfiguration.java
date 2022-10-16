@@ -66,6 +66,7 @@ public class SecurityConfiguration {
             .antMatchers("/api/registration/**").permitAll()
             .antMatchers("/api/password-reset/**").permitAll()
             .antMatchers("/api/**").authenticated()
+            .antMatchers("/websocket/**").authenticated()
         .and()
             .oauth2Login()
         .and()

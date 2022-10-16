@@ -1,5 +1,6 @@
 package com.sergey.zhuravlev.social.configuration.message;
 
+import com.sergey.zhuravlev.social.enums.ErrorCode;
 import com.sergey.zhuravlev.social.exception.SocialServiceException;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,10 @@ public class ErrorMessageResolver {
 
     public String getMessage(SocialServiceException exception, Locale locale) {
         return errors.getMessage(exception.getCode().name(), new Object[]{}, locale);
+    }
+
+    public String getMessage(ErrorCode code, Locale locale, Object... args) {
+        return errors.getMessage(code.name(), args, locale);
     }
 
 }

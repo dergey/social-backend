@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -72,8 +73,14 @@ public class ErrorController {
         if (parameterType.isEnum()) {
             additionalEnumHint = ". Only allowed values of " + Arrays.toString(parameterType.getEnumConstants());
         }
-        return new ErrorDto(ErrorCode.ARGUMENT_TYPE_MISMATCH, String.format("Method parameter '%s' contain illegal value", ex.getName())
-                + additionalEnumHint);
+        return new ErrorDto(ErrorCode.ARGUMENT_TYPE_MISMATCH, errors.getMessage(ErrorCode.ARGUMENT_TYPE_MISMATCH,
+            Locale.getDefault(), ex.getName(), additionalEnumHint));
+    }
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({ HttpRequestMethodNotSupportedException.class })
+    public final ErrorDto handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        return new ErrorDto(ErrorCode.METHOD_NOT_SUPPORTED, errors.getMessage(ErrorCode.METHOD_NOT_SUPPORTED,
+            Locale.getDefault(), ex.getMethod()));
     }
 
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
@@ -111,8 +118,7 @@ public class ErrorController {
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({ UnsupportedOperationException.class })
     public final ErrorDto handleUnsupportedOperationException(UnsupportedOperationException ex) {
-        return new ErrorDto(ErrorCode.NOT_IMPLEMENTED, "This method contains unimplemented functionality. " +
-                "Contact the developer");
+        return new ErrorDto(ErrorCode.NOT_IMPLEMENTED, errors.getMessage(ErrorCode.NOT_IMPLEMENTED, Locale.getDefault()));
     }
 
 }
