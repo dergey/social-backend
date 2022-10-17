@@ -28,7 +28,7 @@ public class SearchController {
     private final ProfileMapper profileMapper;
 
     @GetMapping
-    public Page<ProfilePreviewDto> searchProfile(@RequestParam String query,
+    public Page<ProfilePreviewDto> searchProfile(@RequestParam(required = false) String query,
                                                  @RequestParam(required = false) String country,
                                                  @RequestParam(required = false) String city,
                                                  @RequestParam(required = false) RelationshipStatus relationshipStatus,
