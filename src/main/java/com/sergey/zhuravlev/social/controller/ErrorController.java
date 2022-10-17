@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -76,6 +77,14 @@ public class ErrorController {
         return new ErrorDto(ErrorCode.ARGUMENT_TYPE_MISMATCH, errors.getMessage(ErrorCode.ARGUMENT_TYPE_MISMATCH,
             Locale.getDefault(), ex.getName(), additionalEnumHint));
     }
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({ MissingServletRequestParameterException.class })
+    public final ErrorDto handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        return new ErrorDto(ErrorCode.ARGUMENT_REQUIRED, errors.getMessage(ErrorCode.ARGUMENT_REQUIRED,
+            Locale.getDefault(), ex.getParameterName()));
+    }
+
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ HttpRequestMethodNotSupportedException.class })
     public final ErrorDto handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
