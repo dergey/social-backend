@@ -21,7 +21,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getCurrentUser() {
-        String email  = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new RuntimeException("Unauthorized"));
+        String email = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new RuntimeException("Unauthorized"));
         return getUser(email);
     }
 

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long>, QuerydslPredicateExecutor<Profile> {
@@ -32,4 +34,8 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, Queryds
             countQuery = "select count(p.friends) from Profile p where p = :profile")
     Page<Profile> findAllByFriendInProfile(@Param("profile") Profile profile, Pageable pageable);
 
+    boolean existsByIdAndFriendsContains(Long id, Profile profile);
+
+    @Query("select profile.id from Profile profile where :profile member profile.friends and profile.id in :profileIds")
+    Collection<Long> findAllIdInAndFriendsContains(@Param("profileIds") List<Long> profileIds, @Param("profile") Profile profile);
 }

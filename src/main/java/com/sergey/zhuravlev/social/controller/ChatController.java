@@ -7,10 +7,7 @@ import com.sergey.zhuravlev.social.entity.Chat;
 import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.User;
 import com.sergey.zhuravlev.social.mapper.ChatMapper;
-import com.sergey.zhuravlev.social.service.ChatService;
-import com.sergey.zhuravlev.social.service.MessageService;
-import com.sergey.zhuravlev.social.service.ProfileService;
-import com.sergey.zhuravlev.social.service.UserService;
+import com.sergey.zhuravlev.social.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @Tag(name = "Chat endpoints")
 @RestController
@@ -32,6 +30,7 @@ public class ChatController {
     private final UserService userService;
     private final MessageService messageService;
     private final ProfileService profileService;
+    private final ProfileAttitudeService profileAttitudeService;
 
     private final ChatMapper chatMapper;
 
@@ -40,6 +39,10 @@ public class ChatController {
     public Page<ChatPreviewDto> getCurrentUserChats(@ParameterObject Pageable pageable) {
         User user = userService.getCurrentUser();
         Page<Chat> chat = chatService.getChats(user, pageable);
+        profileAttitudeService.setAttitudes(chat.stream()
+                .map(c -> c.getTargetUser().getProfile())
+                .collect(Collectors.toList()),
+            user.getProfile());
         return chat.map(chatMapper::chatToChatPreviewDto);
     }
 
@@ -50,6 +53,7 @@ public class ChatController {
         User currentUser = userService.getCurrentUser();
         Profile targetProfile = profileService.getProfile(createChatDto.getTargetUsername());
         Chat chat = chatService.getOrCreateChat(currentUser, targetProfile);
+        profileAttitudeService.setAttitude(chat.getTargetUser().getProfile(), currentUser.getProfile());
         return chatMapper.chatAndLastMessagesToChatDto(chat, messageService.getChatLastMessages(chat, 5));
     }
 

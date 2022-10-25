@@ -1,13 +1,14 @@
 package com.sergey.zhuravlev.social.controller;
 
 import com.sergey.zhuravlev.social.dto.ProfilePreviewDto;
+import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.predicate.ProfilePredicateBuilder;
 import com.sergey.zhuravlev.social.enums.RelationshipStatus;
 import com.sergey.zhuravlev.social.mapper.ProfileMapper;
+import com.sergey.zhuravlev.social.service.ProfileAttitudeService;
 import com.sergey.zhuravlev.social.service.ProfileService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Search endpoints")
-@Slf4j
 @RestController
 @RequestMapping("/api/search")
 @RequiredArgsConstructor
 public class SearchController {
 
     private final ProfileService profileService;
+    private final ProfileAttitudeService profileAttitudeService;
 
     private final ProfileMapper profileMapper;
 
@@ -44,7 +45,10 @@ public class SearchController {
                 .withAgeBetween(ageFrom, ageTo)
                 .withQuery(query);
 
-        return profileService.searchProfile(builder, pageable).map(profileMapper::profileToProfilePreviewDto);
+        Page<Profile> profileSearch = profileService.searchProfile(builder, pageable);
+        Profile profileAspect = profileService.getCurrentProfile();
+        profileAttitudeService.setAttitudes(profileSearch, profileAspect);
+        return profileSearch.map(profileMapper::profileToProfilePreviewDto);
     }
 
 }

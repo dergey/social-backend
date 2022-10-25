@@ -3,8 +3,10 @@ package com.sergey.zhuravlev.social.controller;
 import com.sergey.zhuravlev.social.dto.ProfilePreviewDto;
 import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.User;
+import com.sergey.zhuravlev.social.enums.ProfileAttitude;
 import com.sergey.zhuravlev.social.mapper.ProfileMapper;
 import com.sergey.zhuravlev.social.service.FriendService;
+import com.sergey.zhuravlev.social.service.ProfileAttitudeService;
 import com.sergey.zhuravlev.social.service.ProfileService;
 import com.sergey.zhuravlev.social.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,33 +29,36 @@ public class FriendController {
     private final UserService userService;
     private final FriendService friendService;
     private final ProfileService profileService;
+    private final ProfileAttitudeService profileAttitudeService;
 
     private final ProfileMapper profileMapper;
 
     @Operation(description = "Gets a list of friends of the current user")
     @GetMapping("/friend")
     public Page<ProfilePreviewDto> getCurrentUserFriends(@ParameterObject Pageable pageable) {
-        User currentUser = userService.getCurrentUser();
-        Profile currentProfile = profileService.getProfile(currentUser);
-        return friendService.getProfileFriends(currentProfile, pageable)
-                .map(profileMapper::profileToProfilePreviewDto);
+        Profile currentProfile = profileService.getCurrentProfile();
+        Page<Profile> friendPage = friendService.getProfileFriends(currentProfile, pageable);
+        profileAttitudeService.setAttitudesForce(friendPage, ProfileAttitude.FRIEND);
+        return friendPage.map(profileMapper::profileToProfilePreviewDto);
     }
 
     @Operation(description = "Gets a list of incoming friend requests of the current user")
     @GetMapping("/friend/requests")
     public Page<ProfilePreviewDto> getCurrentUserIncomingFriendRequests(@ParameterObject Pageable pageable) {
-        User currentUser = userService.getCurrentUser();
-        Profile currentProfile = profileService.getProfile(currentUser);
-        return friendService.getProfileIncomingFriendRequests(currentProfile, pageable)
-                .map(profileMapper::profileToProfilePreviewDto);
+        Profile currentProfile = profileService.getCurrentProfile();
+        Page<Profile> incomingFriendPage = friendService.getProfileIncomingFriendRequests(currentProfile, pageable);
+        profileAttitudeService.setAttitudesForce(incomingFriendPage, ProfileAttitude.FRIEND_INCOMING);
+        return incomingFriendPage.map(profileMapper::profileToProfilePreviewDto);
     }
 
     @Operation(description = "Gets a list of friends of the user")
     @GetMapping("/profile/{username}/friend")
     public Page<ProfilePreviewDto> getProfileFriends(@PathVariable String username, @ParameterObject Pageable pageable) {
         Profile profile = profileService.getProfile(username);
-        return friendService.getProfileFriends(profile, pageable)
-                .map(profileMapper::profileToProfilePreviewDto);
+        Page<Profile> friendPage = friendService.getProfileFriends(profile, pageable);
+        Profile profileAspect = profileService.getCurrentProfile();
+        profileAttitudeService.setAttitudes(friendPage, profileAspect);
+        return friendPage.map(profileMapper::profileToProfilePreviewDto);
     }
 
     @Operation(description = "Creates a friend request to the specified user")

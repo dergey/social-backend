@@ -1,5 +1,6 @@
 package com.sergey.zhuravlev.social.dto;
 
+import com.sergey.zhuravlev.social.enums.ProfileAttitude;
 import com.sergey.zhuravlev.social.enums.RelationshipStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,5 +29,6 @@ public class ProfileDto {
     private LocalDate birthDate;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+    private ProfileAttitude attitude;
 
 }

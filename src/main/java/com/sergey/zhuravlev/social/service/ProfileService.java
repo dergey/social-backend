@@ -7,6 +7,7 @@ import com.sergey.zhuravlev.social.entity.predicate.ProfilePredicateBuilder;
 import com.sergey.zhuravlev.social.enums.Gender;
 import com.sergey.zhuravlev.social.exception.FieldAlreadyExistsException;
 import com.sergey.zhuravlev.social.repository.ProfileRepository;
+import com.sergey.zhuravlev.social.security.SecurityUtils;
 import com.sergey.zhuravlev.social.util.SearchStringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,12 @@ public class ProfileService {
                 .orElseThrow(() -> new EntityNotFoundException("Profile not found for user"));
     }
 
+    @Transactional(readOnly = true)
+    public Profile getCurrentProfile() {
+        return SecurityUtils.extractProfileId()
+            .flatMap(profileRepository::findById)
+            .orElseThrow(() -> new EntityNotFoundException("Current profile not found"));
+    }
 
     @Transactional
     public Profile createProfile(User user, String username, Image avatar, String firstName, String middleName,
@@ -72,6 +79,7 @@ public class ProfileService {
                 null,
                 LocalDateTime.now(),
                 LocalDateTime.now(),
+                null,
                 null);
         profile.setSearchString(SearchStringUtils.getSearchString(profile));
         return profileRepository.save(profile);

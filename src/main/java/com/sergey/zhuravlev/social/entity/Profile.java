@@ -2,6 +2,7 @@ package com.sergey.zhuravlev.social.entity;
 
 import com.sergey.zhuravlev.social.entity.education.Education;
 import com.sergey.zhuravlev.social.enums.Gender;
+import com.sergey.zhuravlev.social.enums.ProfileAttitude;
 import com.sergey.zhuravlev.social.enums.RelationshipStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -102,5 +103,8 @@ public class Profile {
 
     @Column(name = "search_string", nullable = false)
     private String searchString;
+
+    @Transient
+    private ProfileAttitude attitude;
 
 }

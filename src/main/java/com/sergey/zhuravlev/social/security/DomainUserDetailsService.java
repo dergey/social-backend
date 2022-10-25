@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 @Component("userDetailsService")
 public class DomainUserDetailsService implements UserDetailsService {
 
+    private static final String USER_AUTHORITY_PREFIX = "USER_";
+    private static final String PROFILE_AUTHORITY_PREFIX = "PROFILE_";
+
     private final UserRepository userRepository;
 
     @Override
@@ -46,7 +49,8 @@ public class DomainUserDetailsService implements UserDetailsService {
 //        }
         List<String> authorities = new ArrayList<>();
         authorities.add(AuthoritiesConstants.USER.getRole());
-        authorities.add(String.valueOf(user.getId()));
+        authorities.add(USER_AUTHORITY_PREFIX + user.getId());
+        authorities.add(PROFILE_AUTHORITY_PREFIX + user.getProfile().getId());
         List<GrantedAuthority> grantedAuthorities = authorities.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());

@@ -5,8 +5,10 @@ import com.sergey.zhuravlev.social.entity.Image;
 import com.sergey.zhuravlev.social.entity.Profile;
 import com.sergey.zhuravlev.social.entity.User;
 import com.sergey.zhuravlev.social.enums.ImageSize;
+import com.sergey.zhuravlev.social.enums.ProfileAttitude;
 import com.sergey.zhuravlev.social.mapper.ProfileMapper;
 import com.sergey.zhuravlev.social.service.ImageService;
+import com.sergey.zhuravlev.social.service.ProfileAttitudeService;
 import com.sergey.zhuravlev.social.service.ProfileService;
 import com.sergey.zhuravlev.social.service.UserService;
 import com.sergey.zhuravlev.social.util.ImageResponseUtils;
@@ -33,29 +35,33 @@ public class ProfileController {
     private final UserService userService;
     private final ImageService imageService;
     private final ProfileService profileService;
+    private final ProfileAttitudeService profileAttitudeService;
 
     private final ProfileMapper profileMapper;
 
     @GetMapping
     public ProfileDto getCurrentUserProfile() {
-        User user = userService.getCurrentUser();
-        Profile profile = profileService.getProfile(user);
-        return profileMapper.profileToProfileDto(profile);
+        Profile currentProfile = profileService.getCurrentProfile();
+        profileAttitudeService.setAttitudeForce(currentProfile, ProfileAttitude.YOU);
+        return profileMapper.profileToProfileDto(currentProfile);
     }
 
     @PostMapping("/avatar")
     public ProfileDto createOrUpdateProfileAvatar(@RequestParam("image") MultipartFile multipartFile)
             throws IOException {
         User currentUser = userService.getCurrentUser();
-        Profile profile = profileService.getProfile(currentUser);
+        Profile currentProfile = profileService.getProfile(currentUser);
         Image image = imageService.createImage(currentUser, multipartFile);
-        profile = profileService.createOrUpdateProfileAvatar(profile, image);
-        return profileMapper.profileToProfileDto(profile);
+        currentProfile = profileService.createOrUpdateProfileAvatar(currentProfile, image);
+        profileAttitudeService.setAttitudeForce(currentProfile, ProfileAttitude.YOU);
+        return profileMapper.profileToProfileDto(currentProfile);
     }
 
     @GetMapping("/{username}")
     public ProfileDto getProfile(@PathVariable String username) {
+        Profile profileAspect = profileService.getCurrentProfile();
         Profile profile = profileService.getProfile(username);
+        profileAttitudeService.setAttitude(profile, profileAspect);
         return profileMapper.profileToProfileDto(profile);
     }
 

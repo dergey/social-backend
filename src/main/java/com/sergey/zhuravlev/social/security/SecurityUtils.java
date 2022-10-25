@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -25,6 +26,25 @@ public final class SecurityUtils {
                 }
                 return null;
             });
+    }
+
+    public static Optional<String> extractUserId() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        return Optional.ofNullable(securityContext.getAuthentication())
+            .flatMap(authentication -> Optional.ofNullable(authentication.getAuthorities()))
+            .map(Collection::stream)
+            .flatMap(stream -> stream.filter(authority -> authority.getAuthority().startsWith("USER_")).findFirst())
+            .map(a -> a.getAuthority().substring(5));
+    }
+
+    public static Optional<Long> extractProfileId() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        return Optional.ofNullable(securityContext.getAuthentication())
+            .flatMap(authentication -> Optional.ofNullable(authentication.getAuthorities()))
+            .map(Collection::stream)
+            .flatMap(stream -> stream.filter(authority -> authority.getAuthority().startsWith("PROFILE_")).findFirst())
+            .map(a -> a.getAuthority().substring(8))
+            .map(Long::parseLong);
     }
 
     public static Optional<String> getCurrentUserJWT() {
