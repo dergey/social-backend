@@ -56,12 +56,6 @@ public class ProfileAttitudeService {
             return targets;
         }
 
-        for (Profile target : targets) {
-            if (Objects.equals(target.getId(), profileAspect.getId())) {
-                target.setAttitude(ProfileAttitude.YOU);
-            }
-        }
-
         List<Long> ids = StreamSupport.stream(targets.spliterator(), false)
             .map(Profile::getId)
             .collect(Collectors.toList());
@@ -71,7 +65,9 @@ public class ProfileAttitudeService {
         Collection<Long> friendOutgoingIds = friendRequestRepository.findAllIdTargetIdInAndIdSource(ids, profileAspect);
 
         for (Profile target : targets) {
-            if (friendIds.contains(target.getId())) {
+            if (Objects.equals(target.getId(), profileAspect.getId())) {
+                target.setAttitude(ProfileAttitude.YOU);
+            } else if (friendIds.contains(target.getId())) {
                 target.setAttitude(ProfileAttitude.FRIEND);
             } else if (friendIncomingIds.contains(target.getId())) {
                 target.setAttitude(ProfileAttitude.FRIEND_INCOMING);
