@@ -54,11 +54,14 @@ public class FriendService {
 
         final Long targetProfileId = targetProfile.getId();
 
+        boolean isFriend = currentProfile.getFriends().stream().anyMatch(p -> Objects.equals(p.getId(), targetProfileId));
+
         FriendRequest friendRequest = friendRequestRepository.findByIdSourceAndIdTarget(currentProfile, targetProfile)
                 .orElse(null);
-        if (friendRequest != null) {
-            if (friendRequest.getStatus() == FriendRequestStatus.ACCEPTED &&
-                currentProfile.getFriends().stream().anyMatch(p -> Objects.equals(p.getId(), targetProfileId))) {
+        FriendRequest incomingFriendRequest = friendRequestRepository.findByIdSourceAndIdTarget(targetProfile, currentProfile)
+            .orElse(null);
+        if (friendRequest != null && incomingFriendRequest == null) {
+            if (friendRequest.getStatus() == FriendRequestStatus.ACCEPTED && isFriend) {
                 throw new AlreadyExistsException(friendRequest.getId().getSource().getUsername() + "/"
                         + friendRequest.getId().getTarget().getUsername(), FriendRequest.class.getSimpleName());
             }
@@ -72,10 +75,22 @@ public class FriendService {
                         + friendRequest.getId().getTarget().getUsername(), FriendRequest.class.getSimpleName());
             }
         } else {
-            friendRequestRepository.save(new FriendRequest(
+            if (incomingFriendRequest != null) {
+                if (incomingFriendRequest.getStatus() == FriendRequestStatus.ACCEPTED && isFriend) {
+                    throw new AlreadyExistsException(incomingFriendRequest.getId().getSource().getUsername() + "/"
+                        + incomingFriendRequest.getId().getTarget().getUsername(), FriendRequest.class.getSimpleName());
+                }
+                if (incomingFriendRequest.getStatus() == FriendRequestStatus.PENDING) {
+                    acceptFriendRequest(currentProfile, targetProfile);
+                    return;
+                }
+            }
+            if (friendRequest == null) {
+                friendRequestRepository.save(new FriendRequest(
                     new FriendRequest.FriendId(currentProfile, targetProfile),
                     FriendRequestStatus.PENDING,
                     LocalDateTime.now()));
+            }
         }
     }
 
