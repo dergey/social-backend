@@ -42,20 +42,29 @@ public class FriendService {
         return profileRepository.findAllByProfileTargetInFriendRequest(currentProfile, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Page<Profile> getProfileOutgoingFriendRequests(Profile currentProfile, Pageable pageable) {
+        return profileRepository.findAllByProfileSourceInFriendRequest(currentProfile, pageable);
+    }
+
     @Transactional
     public void createFriendRequest(Profile currentProfile, Profile targetProfile) {
         currentProfile = profileRepository.getById(currentProfile.getId());
         targetProfile = profileRepository.getById(targetProfile.getId());
 
+        final Long targetProfileId = targetProfile.getId();
+
         FriendRequest friendRequest = friendRequestRepository.findByIdSourceAndIdTarget(currentProfile, targetProfile)
                 .orElse(null);
         if (friendRequest != null) {
-            if (friendRequest.getStatus() == FriendRequestStatus.ACCEPTED) {
+            if (friendRequest.getStatus() == FriendRequestStatus.ACCEPTED &&
+                currentProfile.getFriends().stream().anyMatch(p -> Objects.equals(p.getId(), targetProfileId))) {
                 throw new AlreadyExistsException(friendRequest.getId().getSource().getUsername() + "/"
                         + friendRequest.getId().getTarget().getUsername(), FriendRequest.class.getSimpleName());
             }
             if (LocalDateTime.from(friendRequestTimeoutPeriod.addTo(friendRequest.getCreateAt()))
-                    .isBefore(LocalDateTime.now())) {
+                    .isBefore(LocalDateTime.now()) ||
+                    friendRequest.getStatus() == FriendRequestStatus.REVOKE) {
                 friendRequest.setStatus(FriendRequestStatus.PENDING);
                 friendRequest.setCreateAt(LocalDateTime.now());
             } else {
@@ -68,6 +77,23 @@ public class FriendService {
                     FriendRequestStatus.PENDING,
                     LocalDateTime.now()));
         }
+    }
+
+    @Transactional
+    public void revokeFriendRequest(Profile currentProfile, Profile targetProfile) {
+        currentProfile = profileRepository.getById(currentProfile.getId());
+        targetProfile = profileRepository.getById(targetProfile.getId());
+
+        final String currentProfileUsername = currentProfile.getUsername();
+        final String targetProfileUsername = targetProfile.getUsername();
+
+        FriendRequest friendRequest = friendRequestRepository.findByIdSourceAndIdTarget(currentProfile, targetProfile)
+            .filter(fr -> fr.getStatus() == FriendRequestStatus.PENDING)
+            .orElseThrow(() -> new ObjectNotFoundException(
+                String.format("%s/%s", currentProfileUsername, targetProfileUsername),
+                FriendRequest.class.getSimpleName()));
+
+        friendRequest.setStatus(FriendRequestStatus.REVOKE);
     }
 
     @Transactional
@@ -120,5 +146,9 @@ public class FriendService {
 
         currentProfile.getFriends().removeIf(currentFriend -> Objects.equals(currentFriend.getId(), profileTargetId));
         friend.getFriends().removeIf(currentFriend -> Objects.equals(currentFriend.getId(), profileSourceId));
+    }
+
+    private String buildFriendRequestId(FriendRequest friendRequest) {
+        return friendRequest.getId().getSource().getUsername() + "/" + friendRequest.getId().getTarget().getUsername();
     }
 }

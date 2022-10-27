@@ -20,13 +20,13 @@ public interface ProfileRepository extends JpaRepository<Profile, Long>, Queryds
     Optional<Profile> findByUser(User user);
 
 //    // profile sent requests (where profile is the source)
-//    @Query(value = "select fr.id.target from FriendRequest fr where fr.id.source = :profile and fr.status = 'PENDING'",
-//            countQuery = "select count(fr) from FriendRequest fr where fr.id.source = :profile and fr.status = 'PENDING'")
-//    Page<Profile> findAllByProfileSourceInFriendRequest(@Param("profile") Profile profile, Pageable pageable);
+    @Query(value = "select fr.id.target from FriendRequest fr where fr.id.source = :profile and fr.status = 'PENDING'",
+            countQuery = "select count(fr) from FriendRequest fr where fr.id.source = :profile and fr.status = 'PENDING'")
+    Page<Profile> findAllByProfileSourceInFriendRequest(@Param("profile") Profile profile, Pageable pageable);
 
     // profile incoming requests (where profile is the target)
     // todo add the ability to sort: From new to old, From old to new
-    @Query(value = "select fr.id.source from FriendRequest fr where fr.id.target = :profile and fr.status = 'PENDING' order by fr.createAt asc",
+    @Query(value = "select fr.id.source from FriendRequest fr where fr.id.target = :profile and fr.status = 'PENDING'",
             countQuery = "select count(fr) from FriendRequest fr where fr.id.target = :profile and fr.status = 'PENDING'")
     Page<Profile> findAllByProfileTargetInFriendRequest(@Param("profile") Profile profile, Pageable pageable);
 

@@ -52,12 +52,21 @@ public class FriendController {
     }
 
     @Operation(description = "Gets a list of incoming friend requests of the current user")
-    @GetMapping("/friend/requests")
+    @GetMapping("/friend/incoming")
     public Page<ProfilePreviewDto> getCurrentUserIncomingFriendRequests(@ParameterObject Pageable pageable) {
         Profile currentProfile = profileService.getCurrentProfile();
         Page<Profile> incomingFriendPage = friendService.getProfileIncomingFriendRequests(currentProfile, pageable);
         profileAttitudeService.setAttitudesForce(incomingFriendPage, ProfileAttitude.FRIEND_INCOMING);
         return incomingFriendPage.map(profileMapper::profileToProfilePreviewDto);
+    }
+
+    @Operation(description = "Gets a list of outgoing friend requests of the current user")
+    @GetMapping("/friend/outgoing")
+    public Page<ProfilePreviewDto> getCurrentUserOutgoingFriendRequests(@ParameterObject Pageable pageable) {
+        Profile currentProfile = profileService.getCurrentProfile();
+        Page<Profile> outgoingFriendPage = friendService.getProfileOutgoingFriendRequests(currentProfile, pageable);
+        profileAttitudeService.setAttitudesForce(outgoingFriendPage, ProfileAttitude.FRIEND_OUTGOING);
+        return outgoingFriendPage.map(profileMapper::profileToProfilePreviewDto);
     }
 
     @Operation(description = "Gets a list of friends of the user")
@@ -80,9 +89,19 @@ public class FriendController {
         friendService.createFriendRequest(currentProfile, targetProfile);
     }
 
+    @Operation(description = "Revokes a friend request of the specified user")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/profile/{username}/friend/request")
+    public void revokeFriendRequest(@PathVariable String username) {
+        User currentUser = userService.getCurrentUser();
+        Profile currentProfile = profileService.getProfile(currentUser);
+        Profile targetProfile = profileService.getProfile(username);
+        friendService.revokeFriendRequest(currentProfile, targetProfile);
+    }
+
     @Operation(description = "Accepts friend requests from the specified user")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping("/friend/request/{username}/accept")
+    @PostMapping("/friend/incoming/{username}/accept")
     public void acceptFriendRequest(@PathVariable String username) {
         User currentUser = userService.getCurrentUser();
         Profile currentProfile = profileService.getProfile(currentUser);
@@ -92,7 +111,7 @@ public class FriendController {
 
     @Operation(description = "Decline friend requests from the specified user")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping("/friend/request/{username}/decline")
+    @PostMapping("/friend/incoming/{username}/decline")
     public void declineFriendRequest(@PathVariable String username) {
         User currentUser = userService.getCurrentUser();
         Profile currentProfile = profileService.getProfile(currentUser);
