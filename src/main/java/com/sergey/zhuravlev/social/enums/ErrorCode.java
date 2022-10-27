@@ -14,6 +14,9 @@ public enum ErrorCode {
 
     // non generic errors:
 
+    // friend:
+    NOT_FRIEND,
+
     // registration:
     CONFIRMATION_HAS_EXPIRED,
     INVALID_NEW_USER_STATE,

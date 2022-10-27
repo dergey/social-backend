@@ -2,12 +2,15 @@ package com.sergey.zhuravlev.social.service;
 
 import com.sergey.zhuravlev.social.entity.FriendRequest;
 import com.sergey.zhuravlev.social.entity.Profile;
+import com.sergey.zhuravlev.social.enums.ErrorCode;
 import com.sergey.zhuravlev.social.enums.FriendRequestStatus;
 import com.sergey.zhuravlev.social.exception.AlreadyExistsException;
 import com.sergey.zhuravlev.social.exception.ObjectNotFoundException;
+import com.sergey.zhuravlev.social.exception.SocialServiceException;
 import com.sergey.zhuravlev.social.repository.FriendRequestRepository;
 import com.sergey.zhuravlev.social.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FriendService {
@@ -102,4 +107,18 @@ public class FriendService {
         friendRequest.setStatus(FriendRequestStatus.DECLINED);
     }
 
+    @Transactional
+    public void removeProfileFriend(Profile currentProfile, Profile friend) {
+        currentProfile = profileRepository.getById(currentProfile.getId());
+        friend = profileRepository.getById(friend.getId());
+        final Long profileSourceId = currentProfile.getId();
+        final Long profileTargetId = friend.getId();
+
+        if (currentProfile.getFriends().stream().noneMatch(profile -> Objects.equals(profile.getId(), profileTargetId))) {
+            throw new SocialServiceException(ErrorCode.NOT_FRIEND);
+        }
+
+        currentProfile.getFriends().removeIf(currentFriend -> Objects.equals(currentFriend.getId(), profileTargetId));
+        friend.getFriends().removeIf(currentFriend -> Objects.equals(currentFriend.getId(), profileSourceId));
+    }
 }

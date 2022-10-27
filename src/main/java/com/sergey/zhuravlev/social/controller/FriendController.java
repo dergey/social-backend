@@ -42,6 +42,15 @@ public class FriendController {
         return friendPage.map(profileMapper::profileToProfilePreviewDto);
     }
 
+    @Operation(description = "Deletes the current user's friend")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/friend/{username}")
+    public void removeFriend(@PathVariable String username) {
+        Profile currentProfile = profileService.getCurrentProfile();
+        Profile friend = profileService.getProfile(username);
+        friendService.removeProfileFriend(currentProfile, friend);
+    }
+
     @Operation(description = "Gets a list of incoming friend requests of the current user")
     @GetMapping("/friend/requests")
     public Page<ProfilePreviewDto> getCurrentUserIncomingFriendRequests(@ParameterObject Pageable pageable) {
