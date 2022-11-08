@@ -20,14 +20,16 @@ public class ProfilePredicateBuilder {
 
     public ProfilePredicateBuilder withCountry(String country) {
         if (country != null && !country.isEmpty()) {
-            countryExpression = profile.address.country.eq(country);
+            countryExpression = profile.residenceAddress.country.eq(country)
+                .or(profile.registrationAddress.country.eq(country));;
         }
         return this;
     }
 
     public ProfilePredicateBuilder withCity(String city) {
         if (city != null && !city.isEmpty()) {
-            cityExpression = profile.address.city.eq(city);
+            cityExpression = profile.residenceAddress.city.eq(city)
+                .or(profile.registrationAddress.city.eq(city));
         }
         return this;
     }

@@ -1,5 +1,6 @@
 package com.sergey.zhuravlev.social.dto;
 
+import com.sergey.zhuravlev.social.enums.Gender;
 import com.sergey.zhuravlev.social.enums.ProfileAttitude;
 import com.sergey.zhuravlev.social.enums.RelationshipStatus;
 import lombok.AllArgsConstructor;
@@ -21,12 +22,15 @@ public class ProfileDto {
     private String firstName;
     private String middleName;
     private String secondName;
+    private Gender gender;
+    private LocalDate birthDate;
     private String overview;
     private RelationshipStatus relationshipStatus;
-    private String city;
     private String workplace;
     private String education;
-    private LocalDate birthDate;
+    private String citizenship;
+    private AddressDto registrationAddress;
+    private AddressDto residenceAddress;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private ProfileAttitude attitude;

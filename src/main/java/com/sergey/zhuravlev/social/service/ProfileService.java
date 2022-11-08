@@ -77,6 +77,7 @@ public class ProfileService {
                 null,
                 null,
                 null,
+                null,
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 null,

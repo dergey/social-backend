@@ -103,5 +103,4 @@ public class ProfileController {
                 .body(resource);
     }
 
-
 }
