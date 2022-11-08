@@ -34,7 +34,7 @@ public class Profile {
     private User user;
 
     @Column(name = "username", nullable = false)
-    private String username; //+
+    private String username;
 
     @ManyToOne
     @JoinColumn(name = "avatar")
@@ -57,27 +57,27 @@ public class Profile {
     private Collection<Image> profileImages;
 
     @Column(name = "first_name", nullable = false)
-    private String firstName; //+
+    private String firstName;
 
     @Column(name = "middle_name")
-    private String middleName; //+
+    private String middleName;
 
     @Column(name = "second_name", nullable = false)
-    private String secondName; //+
+    private String secondName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
-    private Gender gender; //+
+    private Gender gender;
 
     @Column(name = "birth_date")
-    private LocalDate birthDate; //+
+    private LocalDate birthDate;
 
     @Column(name = "overview", length = 500)
-    private String overview; //+
+    private String overview;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "relationship_status", length = 20)
-    private RelationshipStatus relationshipStatus; //+
+    private RelationshipStatus relationshipStatus;
 
     @Column(name = "workplace", length = 100)
     private String workplace;
