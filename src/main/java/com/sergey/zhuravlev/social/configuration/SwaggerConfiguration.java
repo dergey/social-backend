@@ -15,7 +15,7 @@ public class SwaggerConfiguration {
         return new OpenAPI()
                 .info(new Info().title("Social API")
                         .description("Basic implementation of the social networking API")
-                        .version("v1.0.0"))
+                        .version("v0.0.4"))
                 .externalDocs(new ExternalDocumentation()
                         .description("Social Wiki Documentation")
                         .url("https://github.com/dergey/social-backend/wiki"));
