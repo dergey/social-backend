@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +18,8 @@ public class ProfilePreviewDto {
     private String firstName;
     private String middleName;
     private String secondName;
+    private String city;
+    private LocalDate birthDate;
     private ProfileAttitude attitude;
 
 }
