@@ -18,9 +18,9 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, Fr
 
     boolean existsByIdTargetIdAndIdSource(Long id, Profile aspectProfile);
 
-    @Query("select fr.id.source.id from FriendRequest fr where fr.id.target = :profile and fr.id.source.id in :profileIds")
+    @Query("select fr.id.source.id from FriendRequest fr where fr.id.target = :profile and fr.status = 'PENDING' and fr.id.source.id in :profileIds")
     Collection<Long> findAllIdSourceIdInAndIdTarget(@Param("profileIds") List<Long> ids, @Param("profile") Profile profileAspect);
 
-    @Query("select fr.id.target.id from FriendRequest fr where fr.id.source = :profile and fr.id.target.id in :profileIds")
+    @Query("select fr.id.target.id from FriendRequest fr where fr.id.source = :profile and fr.status = 'PENDING' and fr.id.target.id in :profileIds")
     Collection<Long> findAllIdTargetIdInAndIdSource(@Param("profileIds") List<Long> ids, @Param("profile") Profile profileAspect);
 }
