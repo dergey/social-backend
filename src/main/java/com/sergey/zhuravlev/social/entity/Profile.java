@@ -82,9 +82,6 @@ public class Profile {
     @Column(name = "workplace", length = 100)
     private String workplace;
 
-    @Column(name = "education", length = 100)
-    private String education;
-
     @Column(name = "citizenship", length = 2)
     private String citizenship;
 
