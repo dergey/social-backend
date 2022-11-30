@@ -46,6 +46,15 @@ public class ChatController {
         return chat.map(chatMapper::chatToChatPreviewDto);
     }
 
+    @Operation(description = "Gets a chat")
+    @GetMapping("/{id}")
+    public ChatDto getChat(@PathVariable Long id) {
+        User currentUser = userService.getCurrentUser();
+        Chat chat = chatService.getChat(currentUser, id);
+        profileAttitudeService.setAttitude(chat.getTargetUser().getProfile(), currentUser.getProfile());
+        return chatMapper.chatAndLastMessagesToChatDto(chat, messageService.getChatLastMessages(chat, 5));
+    }
+
     @Operation(description = "Creates or gets a chat with the specified user")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
