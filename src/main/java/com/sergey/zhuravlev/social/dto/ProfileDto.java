@@ -24,6 +24,7 @@ public class ProfileDto {
     private String secondName;
     private Gender gender;
     private LocalDate birthDate;
+    private LocalDateTime lastSeen;
     private String overview;
     private RelationshipStatus relationshipStatus;
     private String workplace;

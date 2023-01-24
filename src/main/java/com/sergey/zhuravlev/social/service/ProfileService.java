@@ -69,6 +69,7 @@ public class ProfileService {
                 middleName,
                 secondName,
                 gender,
+                LocalDateTime.now(),
                 birthDate,
                 null,
                 null,
@@ -89,6 +90,14 @@ public class ProfileService {
     public Profile createOrUpdateProfileAvatar(Profile profile, Image image) {
         profile = profileRepository.getById(profile.getId());
         profile.setAvatar(image);
+        return profile;
+    }
+
+    @Transactional
+    public Profile updateLastSeen(User user) {
+        Profile profile = profileRepository.findByUser(user)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Profile not found by user %s", user.getEmail())));
+        profile.setLastSeen(LocalDateTime.now());
         return profile;
     }
 

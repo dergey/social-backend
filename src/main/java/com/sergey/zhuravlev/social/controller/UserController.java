@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "User endpoints")
 @RestController
-@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -20,8 +19,9 @@ public class UserController {
 
     private final UserMapper userMapper;
 
-    @GetMapping
+    @GetMapping("/api/user")
     public UserDto getCurrentUser() {
+
         User user = userService.getCurrentUser();
         return userMapper.userToUserDto(user);
     }

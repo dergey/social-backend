@@ -69,6 +69,9 @@ public class Profile {
     @Column(name = "gender")
     private Gender gender;
 
+    @Column(name = "last_seen")
+    private LocalDateTime lastSeen;
+
     @Column(name = "birth_date")
     private LocalDate birthDate;
 
